@@ -11,21 +11,25 @@ export const createOrder = async (data) => {
 
 export const fbPixel = () => {};
 
-export const adminLogin = async (data) => {
-  const token = "faris_admin_" + data.password;
-  const r = await fetch("/api/admin/orders", {
-    headers: {"x-admin-token": token}
+const getToken = () => sessionStorage.getItem("faris_admin_token") || "";
+
+export const adminLogin = async (password) => {
+  const r = await fetch("/api/admin/auth", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({password})
   });
-  if (r.ok) {
-    localStorage.setItem("adminPass", token);
-    return {success: true};
+  const data = await r.json();
+  if (data.token) {
+    sessionStorage.setItem("faris_admin_token", data.token);
+    return {token: data.token, success: true};
   }
   return {success: false};
 };
 
 export const getOrders = async () => {
   const r = await fetch("/api/admin/orders", {
-    headers: {"x-admin-token": localStorage.getItem("adminPass") || ""}
+    headers: {"x-admin-token": getToken()}
   });
   return r.json();
 };
@@ -35,7 +39,7 @@ export const updateOrderStatus = async (id, status) => {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      "x-admin-token": localStorage.getItem("adminPass") || ""
+      "x-admin-token": getToken()
     },
     body: JSON.stringify({status})
   });
@@ -47,7 +51,7 @@ export const blockIP = async (ip) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-admin-token": localStorage.getItem("adminPass") || ""
+      "x-admin-token": getToken()
     },
     body: JSON.stringify({ip})
   });
@@ -57,21 +61,21 @@ export const blockIP = async (ip) => {
 export const unblockIP = async (ip) => {
   const r = await fetch("/api/admin/block/" + ip, {
     method: "DELETE",
-    headers: {"x-admin-token": localStorage.getItem("adminPass") || ""}
+    headers: {"x-admin-token": getToken()}
   });
   return r.json();
 };
 
 export const getBlockedIPs = async () => {
   const r = await fetch("/api/admin/blocked", {
-    headers: {"x-admin-token": localStorage.getItem("adminPass") || ""}
+    headers: {"x-admin-token": getToken()}
   });
   return r.json();
 };
 
 export const getStats = async () => {
   const r = await fetch("/api/admin/stats", {
-    headers: {"x-admin-token": localStorage.getItem("adminPass") || ""}
+    headers: {"x-admin-token": getToken()}
   });
   return r.json();
 };
