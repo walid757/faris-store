@@ -8,8 +8,9 @@ export const createOrder = async (data) => {
 export const fbPixel = () => {};
 
 export const adminLogin = async (data) => {
-  const r = await fetch("/api/admin/login", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)});
-  return r.json();
+  const r = await fetch("/api/orders", {headers:{"x-admin-password": data.password}});
+  if (r.ok) return {success: true};
+  return {success: false};
 };
 
 export const getOrders = async () => {
@@ -40,4 +41,4 @@ export const getBlockedIPs = async () => {
 export const getStats = async () => {
   const r = await fetch("/api/admin/stats", {headers:{"x-admin-password":localStorage.getItem("adminPass")||""}});
   return r.json();
-};
+};s
