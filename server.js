@@ -14,12 +14,18 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'faris2025'
 // ── GOOGLE SHEETS ────────────────────────────────────────────
 const SHEET_ID = process.env.GOOGLE_SHEET_ID
 const appendToSheet = async (order) => {
-  if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) return
+  const email = process.env.GOOGLE_CLIENT_EMAIL
+  const key   = process.env.GOOGLE_PRIVATE_KEY
+  const sid   = process.env.GOOGLE_SHEET_ID
+  if (!email || !key || !sid) {
+    console.log('[SHEETS] Skipped - missing env vars:', { email: !!email, key: !!key, sid: !!sid })
+    return
+  }
   try {
     const auth = new google.auth.GoogleAuth({
       credentials: {
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
+        client_email: email,
+        private_key: key.includes('\\n') ? key.replace(/\\n/g, '\n') : key
       },
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
     })
