@@ -87,8 +87,15 @@ if (!fs.existsSync(FILES.blocked)) writeJSON(FILES.blocked, [])
 if (!fs.existsSync(FILES.stats))   writeJSON(FILES.stats,   { visits: 0, orders: 0 })
 
 // ── MIDDLEWARE ───────────────────────────────────────────────
+app.set('trust proxy', 1)
 app.use(cors())
 app.use(express.json())
+
+const getClientIP = (req) =>
+  req.headers['x-forwarded-for']?.split(',')[0].trim() ||
+  req.headers['x-real-ip'] ||
+  req.ip ||
+  req.connection.remoteAddress
 
 // Rate limiting: max 5 orders per hour per IP
 const orderLimiter = rateLimit({
@@ -99,7 +106,7 @@ const orderLimiter = rateLimit({
 
 // IP Blocking middleware
 app.use('/api/orders', (req, res, next) => {
-  const clientIP = req.ip || req.connection.remoteAddress
+  const clientIP = getClientIP(req)
   const blocked = readJSON(FILES.blocked, [])
   if (blocked.find(b => b.ip === clientIP)) {
     return res.status(403).json({ error: 'Acces refuse', code: 403 })
@@ -133,7 +140,7 @@ app.post('/api/orders', orderLimiter, (req, res) => {
   if (!ville?.trim())   return res.status(400).json({ field: 'ville', error: 'Ville requise' })
 
 
-  const clientIP = req.ip || req.connection.remoteAddress
+  const clientIP = getClientIP(req)
 
   const order = {
     id:       Date.now(),
