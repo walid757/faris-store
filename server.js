@@ -53,7 +53,7 @@ const appendToSheet = async (order) => {
           order.ville,
           order.produit,
           [order.couleur, order.taille ? 'EU' + order.taille : ''].filter(Boolean).join(' '),
-          'Confirmé'
+          ''
         ]]
       }
     })
