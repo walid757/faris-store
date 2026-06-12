@@ -1,13 +1,53 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const fs = require('fs')
 const rateLimit = require('express-rate-limit')
+const { google } = require('googleapis')
 
 const app = express()
 const PORT = process.env.PORT || 5000
 const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '212600000000'
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'faris2025'
+
+// ── GOOGLE SHEETS ────────────────────────────────────────────
+const SHEET_ID = process.env.GOOGLE_SHEET_ID
+const appendToSheet = async (order) => {
+  if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) return
+  try {
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
+      },
+      scopes: ['https://www.googleapis.com/auth/spreadsheets']
+    })
+    const sheets = google.sheets({ version: 'v4', auth })
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: 'Sheet1!A1',
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      requestBody: {
+        values: [[
+          order.ref,
+          order.nom,
+          order.tel,
+          order.adresse,
+          order.prix,
+          order.ville,
+          order.produit,
+          [order.couleur, order.taille ? 'EU' + order.taille : ''].filter(Boolean).join(' '),
+          'Confirmé'
+        ]]
+      }
+    })
+    console.log(`[SHEETS] Row added for ${order.ref}`)
+  } catch (err) {
+    console.error('[SHEETS] Error:', err.message)
+  }
+}
 
 // ── DATA FILES ──────────────────────────────────────────────
 const DATA_DIR = path.join(__dirname, 'data')
@@ -119,6 +159,8 @@ app.post('/api/orders', orderLimiter, (req, res) => {
     `💰 ${order.prix} MAD\n` +
     `🕐 ${order.timeStr}`
   )
+
+  appendToSheet(order)
 
   console.log(`[ORDER] ${order.ref} - ${order.nom} - ${order.tel} - ${order.ville}`)
   console.log(`[WA] https://wa.me/${WHATSAPP_NUMBER}?text=${waMsg}`)
