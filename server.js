@@ -221,18 +221,6 @@ app.patch('/api/admin/orders/:id', adminAuth, (req, res) => {
   const idx = orders.findIndex(o => o.id === parseInt(req.params.id))
   if (idx === -1) return res.status(404).json({ error: 'Commande introuvable' })
   orders[idx].status = status
-  // Auto-block IP when order marked as Bloque
-  if (status === 'Bloque') {
-    const ip = orders[idx].ip
-    if (ip) {
-      const blocked = readJSON(FILES.blocked, [])
-      if (!blocked.find(b => b.ip === ip)) {
-        blocked.push({ ip, reason: 'Commande frauduleuse', blockedAt: new Date().toISOString() })
-        writeJSON(FILES.blocked, blocked)
-      }
-      orders.forEach(o => { if (o.ip === ip) o.status = 'Bloque' })
-    }
-  }
   writeJSON(FILES.orders, orders)
   res.json({ success: true })
 })
