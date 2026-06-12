@@ -13,20 +13,28 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'faris2025'
 
 // ── GOOGLE SHEETS ────────────────────────────────────────────
 const SHEET_ID = process.env.GOOGLE_SHEET_ID
+const getGoogleCredentials = () => {
+  if (process.env.GOOGLE_CREDENTIALS_BASE64) {
+    return JSON.parse(Buffer.from(process.env.GOOGLE_CREDENTIALS_BASE64, 'base64').toString())
+  }
+  if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+    return {
+      client_email: process.env.GOOGLE_CLIENT_EMAIL,
+      private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
+    }
+  }
+  return null
+}
 const appendToSheet = async (order) => {
-  const email = process.env.GOOGLE_CLIENT_EMAIL
-  const key   = process.env.GOOGLE_PRIVATE_KEY
+  const creds = getGoogleCredentials()
   const sid   = process.env.GOOGLE_SHEET_ID
-  if (!email || !key || !sid) {
-    console.log('[SHEETS] Skipped - missing env vars:', { email: !!email, key: !!key, sid: !!sid })
+  if (!creds || !sid) {
+    console.log('[SHEETS] Skipped - missing credentials or sheet ID')
     return
   }
   try {
     const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: email,
-        private_key: key.includes('\\n') ? key.replace(/\\n/g, '\n') : key
-      },
+      credentials: creds,
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
     })
     const sheets = google.sheets({ version: 'v4', auth })
@@ -106,18 +114,14 @@ app.get('/api/ping', (req, res) => res.json({ status: 'ok', version: '1.0.0' }))
 
 // Google Sheets debug
 app.get('/api/sheets-test', async (req, res) => {
-  const email = process.env.GOOGLE_CLIENT_EMAIL
-  const key   = process.env.GOOGLE_PRIVATE_KEY
+  const creds = getGoogleCredentials()
   const sid   = process.env.GOOGLE_SHEET_ID
-  if (!email || !key || !sid) {
-    return res.json({ ok: false, missing: { email: !email, key: !key, sid: !sid } })
+  if (!creds || !sid) {
+    return res.json({ ok: false, missing: { creds: !creds, sid: !sid } })
   }
   try {
     const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: email,
-        private_key: key.includes('\\n') ? key.replace(/\\n/g, '\n') : key
-      },
+      credentials: creds,
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
     })
     const sheets = google.sheets({ version: 'v4', auth })
