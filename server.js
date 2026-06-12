@@ -70,7 +70,6 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR)
 const FILES = {
   orders:  path.join(DATA_DIR, 'orders.json'),
   blocked: path.join(DATA_DIR, 'blocked_ips.json'),
-  blockedTels: path.join(DATA_DIR, 'blocked_tels.json'),
   stats:   path.join(DATA_DIR, 'stats.json')
 }
 
@@ -83,10 +82,9 @@ const writeJSON = (file, data) => {
 }
 
 // Init files
-if (!fs.existsSync(FILES.orders))     writeJSON(FILES.orders,     [])
-if (!fs.existsSync(FILES.blocked))    writeJSON(FILES.blocked,    [])
-if (!fs.existsSync(FILES.blockedTels))writeJSON(FILES.blockedTels,[])
-if (!fs.existsSync(FILES.stats))      writeJSON(FILES.stats,      { visits: 0, orders: 0 })
+if (!fs.existsSync(FILES.orders))  writeJSON(FILES.orders,  [])
+if (!fs.existsSync(FILES.blocked)) writeJSON(FILES.blocked, [])
+if (!fs.existsSync(FILES.stats))   writeJSON(FILES.stats,   { visits: 0, orders: 0 })
 
 // ── MIDDLEWARE ───────────────────────────────────────────────
 app.use(cors())
@@ -99,20 +97,14 @@ const orderLimiter = rateLimit({
   message: { error: 'Trop de tentatives. Veuillez reessayer dans 1 heure.' }
 })
 
-// IP + Tel Blocking middleware
+// IP Blocking middleware
 app.use('/api/orders', (req, res, next) => {
   const clientIP = req.ip || req.connection.remoteAddress
-  if (readJSON(FILES.blocked, []).find(b => b.ip === clientIP)) {
+  const blocked = readJSON(FILES.blocked, [])
+  if (blocked.find(b => b.ip === clientIP)) {
     return res.status(403).json({ error: 'Acces refuse', code: 403 })
   }
   next()
-})
-
-app.post('/api/orders/check-tel', (req, res) => {
-  const { tel } = req.body
-  const blocked = readJSON(FILES.blockedTels, []).find(b => b.tel === tel)
-  if (blocked) return res.json({ blocked: true })
-  res.json({ blocked: false })
 })
 
 // ── ROUTES ───────────────────────────────────────────────────
@@ -140,10 +132,6 @@ app.post('/api/orders', orderLimiter, (req, res) => {
   if (!adresse?.trim()) return res.status(400).json({ field: 'adresse', error: 'Adresse requise' })
   if (!ville?.trim())   return res.status(400).json({ field: 'ville', error: 'Ville requise' })
 
-  // Tel blocking check
-  if (readJSON(FILES.blockedTels, []).find(b => b.tel === tel.trim())) {
-    return res.status(403).json({ error: 'Acces refuse', code: 403 })
-  }
 
   const clientIP = req.ip || req.connection.remoteAddress
 
@@ -233,24 +221,17 @@ app.patch('/api/admin/orders/:id', adminAuth, (req, res) => {
   const idx = orders.findIndex(o => o.id === parseInt(req.params.id))
   if (idx === -1) return res.status(404).json({ error: 'Commande introuvable' })
   orders[idx].status = status
-  // Auto-block IP + Tel when order marked as Bloque
+  // Auto-block IP when order marked as Bloque
   if (status === 'Bloque') {
-    const { ip, tel } = orders[idx]
+    const ip = orders[idx].ip
     if (ip) {
       const blocked = readJSON(FILES.blocked, [])
       if (!blocked.find(b => b.ip === ip)) {
         blocked.push({ ip, reason: 'Commande frauduleuse', blockedAt: new Date().toISOString() })
         writeJSON(FILES.blocked, blocked)
       }
+      orders.forEach(o => { if (o.ip === ip) o.status = 'Bloque' })
     }
-    if (tel) {
-      const blockedTels = readJSON(FILES.blockedTels, [])
-      if (!blockedTels.find(b => b.tel === tel)) {
-        blockedTels.push({ tel, reason: 'Commande frauduleuse', blockedAt: new Date().toISOString() })
-        writeJSON(FILES.blockedTels, blockedTels)
-      }
-    }
-    orders.forEach(o => { if (o.ip === ip || o.tel === tel) o.status = 'Bloque' })
   }
   writeJSON(FILES.orders, orders)
   res.json({ success: true })
