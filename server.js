@@ -104,6 +104,36 @@ app.use('/api/orders', (req, res, next) => {
 // Ping
 app.get('/api/ping', (req, res) => res.json({ status: 'ok', version: '1.0.0' }))
 
+// Google Sheets debug
+app.get('/api/sheets-test', async (req, res) => {
+  const email = process.env.GOOGLE_CLIENT_EMAIL
+  const key   = process.env.GOOGLE_PRIVATE_KEY
+  const sid   = process.env.GOOGLE_SHEET_ID
+  if (!email || !key || !sid) {
+    return res.json({ ok: false, missing: { email: !email, key: !key, sid: !sid } })
+  }
+  try {
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: email,
+        private_key: key.includes('\\n') ? key.replace(/\\n/g, '\n') : key
+      },
+      scopes: ['https://www.googleapis.com/auth/spreadsheets']
+    })
+    const sheets = google.sheets({ version: 'v4', auth })
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: sid,
+      range: 'Youcan-Orders!A1',
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      requestBody: { values: [['DIAG-TEST','Test','0600000000','Test','0','Test','Test','Test','Confirme']] }
+    })
+    res.json({ ok: true, message: 'Row added to sheet successfully' })
+  } catch (e) {
+    res.json({ ok: false, error: e.message })
+  }
+})
+
 // Stats (page view)
 app.post('/api/stats/visit', (req, res) => {
   const stats = readJSON(FILES.stats, { visits: 0, orders: 0 })
