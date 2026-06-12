@@ -26,7 +26,7 @@ const appendToSheet = async (order) => {
     const sheets = google.sheets({ version: 'v4', auth })
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: 'Sheet1!A1',
+      range: 'Youcan-Orders!A1',
       valueInputOption: 'RAW',
       insertDataOption: 'INSERT_ROWS',
       requestBody: {
