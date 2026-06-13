@@ -89,10 +89,11 @@ export const T = {
     backToShop: 'RETOUR À LA BOUTIQUE',
     // Errors
     errNom: 'Nom requis',
-    errTel: 'Numéro invalide (0XXXXXXXXX)',
+    errTel: 'Numéro invalide (06XXXXXXXX ou 07XXXXXXXX)',
     errAdresse: 'Adresse requise',
     errVille: 'Ville requise',
     errTaille: 'Choisissez une pointure',
+    errBlocked: 'Votre accès à ce site a été bloqué.',
   },
 
   ar: {
@@ -172,10 +173,11 @@ export const T = {
     confirmedSub: 'سيتواصل معك فريقنا خلال 24 ساعة لتأكيد التوصيل.',
     backToShop: 'العودة للمتجر',
     errNom: 'الاسم مطلوب',
-    errTel: 'رقم غير صحيح (0XXXXXXXXX)',
+    errTel: 'رقم غير صحيح (يبدأ بـ 06 أو 07 · 10 أرقام)',
     errAdresse: 'العنوان مطلوب',
     errVille: 'المدينة مطلوبة',
     errTaille: 'اختر مقاساً',
+    errBlocked: 'تم حظر وصولك إلى هذا الموقع.',
   }
 }
 

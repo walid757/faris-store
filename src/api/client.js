@@ -46,14 +46,14 @@ export const updateOrderStatus = async (id, status) => {
   return r.json();
 };
 
-export const blockIP = async (ip) => {
+export const blockIP = async (ip, reason) => {
   const r = await fetch("/api/admin/block", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "x-admin-token": getToken()
     },
-    body: JSON.stringify({ip})
+    body: JSON.stringify({ ip, reason })
   });
   return r.json();
 };

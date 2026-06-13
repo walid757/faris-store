@@ -109,7 +109,7 @@ app.use('/api/orders', (req, res, next) => {
   const clientIP = getClientIP(req)
   const blocked = readJSON(FILES.blocked, [])
   if (blocked.find(b => b.ip === clientIP)) {
-    return res.status(403).json({ error: 'Acces refuse', code: 403 })
+    return res.status(403).json({ error: 'Acces refuse', blocked: true })
   }
   next()
 })
@@ -134,8 +134,8 @@ app.post('/api/orders', orderLimiter, (req, res) => {
 
   // Validation
   if (!nom?.trim())    return res.status(400).json({ field: 'nom', error: 'Nom requis' })
-  if (!tel || !tel.startsWith('0') || tel.length !== 10 || !/^\d+$/.test(tel))
-    return res.status(400).json({ field: 'tel', error: 'Numero invalide (0XXXXXXXXX)' })
+  if (!tel || !/^0[67]\d{8}$/.test(tel))
+    return res.status(400).json({ field: 'tel', error: 'Numero invalide (06XXXXXXXX ou 07XXXXXXXX)' })
   if (!adresse?.trim()) return res.status(400).json({ field: 'adresse', error: 'Adresse requise' })
   if (!ville?.trim())   return res.status(400).json({ field: 'ville', error: 'Ville requise' })
 

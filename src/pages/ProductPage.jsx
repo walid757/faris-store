@@ -44,7 +44,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
   const validate = () => {
     const e = {}
     if (!form.nom.trim())  e.nom     = tr.errNom
-    if (!form.tel || !form.tel.startsWith('0') || form.tel.length !== 10) e.tel = tr.errTel
+    if (!form.tel || !/^0[67]\d{8}$/.test(form.tel)) e.tel = tr.errTel
     if (!form.adresse.trim()) e.adresse = tr.errAdresse
     if (!form.ville.trim())   e.ville   = tr.errVille
     if (prod.tailles.length > 0 && !size) e.size = tr.errTaille
@@ -74,6 +74,8 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         fbPixel('Purchase', { value: prod.prix, currency: 'MAD', content_name: prod.nom.fr })
         setOrdered(true)
         window.scrollTo(0, 0)
+      } else if (res.blocked) {
+        toast$(tr.errBlocked)
       } else if (res.field) {
         setErrs({ [res.field]: res.error })
       } else {
