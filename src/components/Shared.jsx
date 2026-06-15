@@ -105,7 +105,7 @@ export function WhatsApp() {
     if (!document.getElementById('faris-wa-css')) document.head.appendChild(s)
   }, [])
 
-  const msg = 'السلام عليكم، أريد الاستفسار عن منتجات فارس للأحذية الجلدية 👟'
+  const msg = 'السلام عليكم، أريد الاستفسار عن منتجاتكم للأحذية الجلدية 👟'
 
   return (
     <div className="wa-wrap" style={{ position: 'fixed', bottom: 24, right: 16, zIndex: 150,
