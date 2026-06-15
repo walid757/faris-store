@@ -8,7 +8,7 @@ const { google } = require('googleapis')
 
 const app = express()
 const PORT = process.env.PORT || 5000
-const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '212600000000'
+const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '212642499661'
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'faris2025'
 
 // ── GOOGLE SHEETS ────────────────────────────────────────────
