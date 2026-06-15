@@ -86,44 +86,67 @@ export function Toast({ msg }) {
 }
 
 // ── WHATSAPP BUTTON ────────────────────────────────────────────
-export function WhatsApp({ lang = 'fr' }) {
+export function WhatsApp() {
   useEffect(() => {
     const s = document.createElement('style')
     s.id = 'faris-wa-css'
     s.textContent = `
       @keyframes wa-pulse {
-        0%   { transform: scale(1);   opacity: .6; }
-        100% { transform: scale(1.9); opacity: 0;  }
+        0%   { transform: scale(1);   opacity: .5; }
+        100% { transform: scale(2.2); opacity: 0;  }
       }
-      .wa-btn:hover { transform: scale(1.1) !important; }
+      @keyframes wa-bounce {
+        0%,100% { transform: translateY(0);  }
+        50%      { transform: translateY(-6px); }
+      }
+      .wa-wrap:hover .wa-btn  { transform: scale(1.08); }
+      .wa-wrap:hover .wa-label { opacity: 1 !important; transform: translateX(0) !important; }
     `
     if (!document.getElementById('faris-wa-css')) document.head.appendChild(s)
   }, [])
 
-  const msg = lang === 'ar'
-    ? 'مرحباً، أريد الاستفسار عن منتجات فارس'
-    : 'Bonjour, je voudrais me renseigner sur les produits Faris'
+  const msg = 'السلام عليكم، أريد الاستفسار عن منتجات فارس للأحذية الجلدية 👟'
 
   return (
-    <div style={{ position: 'fixed', bottom: 22, right: 16, zIndex: 150 }}>
-      {/* حلقات النبضة */}
-      {[0, 300, 600].map(delay => (
-        <span key={delay} style={{
-          position: 'absolute', inset: 0, borderRadius: '50%',
-          background: 'rgba(37,211,102,.4)',
-          animation: `wa-pulse 1.8s ease-out ${delay}ms infinite`
-        }} />
-      ))}
-      <a href={`https://wa.me/212642499661?text=${encodeURIComponent(msg)}`}
-        target="_blank" rel="noopener noreferrer" className="wa-btn"
-        style={{ position: 'relative', width: 56, height: 56, background: '#25d366',
-          borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 4px 20px rgba(37,211,102,.5)', textDecoration: 'none',
-          transition: 'transform .2s ease' }}>
-        <svg viewBox="0 0 32 32" width="30" height="30" fill="white">
-          <path d="M16 2C8.27 2 2 8.27 2 16c0 2.44.65 4.73 1.79 6.72L2 30l7.5-1.96A13.93 13.93 0 0016 30c7.73 0 14-6.27 14-14S23.73 2 16 2zm0 25.5c-2.22 0-4.3-.6-6.1-1.64l-.44-.26-4.45 1.16 1.19-4.33-.29-.46A11.47 11.47 0 014.5 16C4.5 9.6 9.6 4.5 16 4.5S27.5 9.6 27.5 16 22.4 27.5 16 27.5zm6.3-8.56c-.34-.17-2.02-1-2.34-1.11-.32-.11-.55-.17-.78.17s-.9 1.11-1.1 1.34c-.2.23-.4.26-.74.09-.34-.17-1.44-.53-2.74-1.69-1.01-.9-1.7-2.01-1.9-2.35-.2-.34-.02-.52.15-.69.15-.15.34-.4.51-.6.17-.2.23-.34.34-.57.11-.23.06-.43-.03-.6-.09-.17-.78-1.88-1.07-2.57-.28-.67-.57-.58-.78-.59h-.67c-.23 0-.6.09-.91.43-.32.34-1.21 1.18-1.21 2.88s1.24 3.34 1.41 3.57c.17.23 2.44 3.73 5.91 5.23.83.36 1.47.57 1.97.73.83.26 1.58.23 2.17.14.66-.1 2.02-.83 2.31-1.62.28-.8.28-1.48.2-1.62-.09-.14-.32-.23-.66-.4z"/>
-        </svg>
-      </a>
+    <div className="wa-wrap" style={{ position: 'fixed', bottom: 24, right: 16, zIndex: 150,
+      display: 'flex', alignItems: 'center', gap: 10 }}>
+
+      {/* Label */}
+      <div className="wa-label" style={{
+        background: 'white', color: '#111', fontSize: 13, fontWeight: 700,
+        padding: '8px 14px', borderRadius: 20, whiteSpace: 'nowrap',
+        boxShadow: '0 4px 16px rgba(0,0,0,.15)',
+        opacity: 0, transform: 'translateX(10px)',
+        transition: 'all .3s ease', fontFamily: 'Tajawal,sans-serif',
+        border: '1px solid #e8e8e8'
+      }}>
+        💬 تواصل معنا
+      </div>
+
+      {/* Pulse rings */}
+      <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0 }}>
+        {[0, 400].map(d => (
+          <span key={d} style={{
+            position: 'absolute', inset: 0, borderRadius: '50%',
+            background: 'rgba(37,211,102,.45)',
+            animation: `wa-pulse 2s ease-out ${d}ms infinite`
+          }} />
+        ))}
+        <a href={`https://wa.me/212642499661?text=${encodeURIComponent(msg)}`}
+          target="_blank" rel="noopener noreferrer" className="wa-btn"
+          style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(135deg, #25d366, #128c4e)',
+            borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 6px 24px rgba(37,211,102,.55)', textDecoration: 'none',
+            transition: 'transform .2s ease',
+            animation: 'wa-bounce 3s ease-in-out infinite'
+          }}>
+          <svg viewBox="0 0 32 32" width="32" height="32" fill="white">
+            <path d="M16 2C8.27 2 2 8.27 2 16c0 2.44.65 4.73 1.79 6.72L2 30l7.5-1.96A13.93 13.93 0 0016 30c7.73 0 14-6.27 14-14S23.73 2 16 2zm0 25.5c-2.22 0-4.3-.6-6.1-1.64l-.44-.26-4.45 1.16 1.19-4.33-.29-.46A11.47 11.47 0 014.5 16C4.5 9.6 9.6 4.5 16 4.5S27.5 9.6 27.5 16 22.4 27.5 16 27.5zm6.3-8.56c-.34-.17-2.02-1-2.34-1.11-.32-.11-.55-.17-.78.17s-.9 1.11-1.1 1.34c-.2.23-.4.26-.74.09-.34-.17-1.44-.53-2.74-1.69-1.01-.9-1.7-2.01-1.9-2.35-.2-.34-.02-.52.15-.69.15-.15.34-.4.51-.6.17-.2.23-.34.34-.57.11-.23.06-.43-.03-.6-.09-.17-.78-1.88-1.07-2.57-.28-.67-.57-.58-.78-.59h-.67c-.23 0-.6.09-.91.43-.32.34-1.21 1.18-1.21 2.88s1.24 3.34 1.41 3.57c.17.23 2.44 3.73 5.91 5.23.83.36 1.47.57 1.97.73.83.26 1.58.23 2.17.14.66-.1 2.02-.83 2.31-1.62.28-.8.28-1.48.2-1.62-.09-.14-.32-.23-.66-.4z"/>
+          </svg>
+        </a>
+      </div>
     </div>
   )
 }
