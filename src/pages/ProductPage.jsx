@@ -58,14 +58,16 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
     return () => document.removeEventListener('mouseleave', onLeave)
   }, [form, ordered])
 
-  // Exit intent (mobile: fast scroll to top after filling form)
+  // Exit intent (mobile: scrolled down then back to top)
   useEffect(() => {
-    let lastY = window.scrollY
+    let wasBelow = false
     const onScroll = () => {
-      const currentY = window.scrollY
-      const delta = lastY - currentY
-      if (currentY < 80 && delta > 40) triggerPopup()
-      lastY = currentY
+      const y = window.scrollY
+      if (y > 300) wasBelow = true
+      if (wasBelow && y < 80) {
+        wasBelow = false
+        triggerPopup()
+      }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
