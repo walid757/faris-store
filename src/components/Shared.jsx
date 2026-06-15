@@ -87,18 +87,12 @@ export function Toast({ msg }) {
 
 // ── WHATSAPP BUTTON ────────────────────────────────────────────
 export function WhatsApp({ lang = 'fr' }) {
-  const [number, setNumber] = useState('')
-
-  useEffect(() => {
-    fetch('/api/config').then(r => r.json()).then(d => setNumber(d.whatsapp)).catch(() => {})
-  }, [])
-
   const msg = lang === 'ar'
     ? 'مرحباً، أريد الاستفسار عن منتجات فارس'
     : 'Bonjour, je voudrais me renseigner sur les produits Faris'
 
   return (
-    <a href={number ? `https://wa.me/${number}?text=${encodeURIComponent(msg)}` : '#'}
+    <a href={`https://wa.me/212642499661?text=${encodeURIComponent(msg)}`}
       target="_blank" rel="noopener noreferrer"
       style={{ position: 'fixed', bottom: 20, right: 14, width: 54, height: 54,
         background: '#25d366', borderRadius: '50%', display: 'flex', alignItems: 'center',
