@@ -531,7 +531,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         </div>
       </div>
 
-      <WhatsApp onToast={toast$} />
+      <WhatsApp lang={lang} />
     </div>
   )
 }

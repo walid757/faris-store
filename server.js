@@ -119,6 +119,9 @@ app.use('/api/orders', (req, res, next) => {
 // Ping
 app.get('/api/ping', (req, res) => res.json({ status: 'ok', version: '1.0.0' }))
 
+// Public config (whatsapp number for frontend)
+app.get('/api/config', (req, res) => res.json({ whatsapp: WHATSAPP_NUMBER }))
+
 
 // Stats (page view)
 app.post('/api/stats/visit', (req, res) => {

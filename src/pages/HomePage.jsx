@@ -207,7 +207,7 @@ export default function HomePage({ lang = 'fr', onLangToggle, onProduct, onAdmin
         </div>
       </footer>
 
-      <WhatsApp onToast={toast$} />
+      <WhatsApp lang={lang} />
     </div>
   )
 }

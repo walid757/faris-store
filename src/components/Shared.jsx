@@ -86,15 +86,26 @@ export function Toast({ msg }) {
 }
 
 // ── WHATSAPP BUTTON ────────────────────────────────────────────
-export function WhatsApp({ onToast }) {
+export function WhatsApp({ lang = 'fr' }) {
+  const [number, setNumber] = useState('')
+
+  useEffect(() => {
+    fetch('/api/config').then(r => r.json()).then(d => setNumber(d.whatsapp)).catch(() => {})
+  }, [])
+
+  const msg = lang === 'ar'
+    ? 'مرحباً، أريد الاستفسار عن منتجات فارس'
+    : 'Bonjour, je voudrais me renseigner sur les produits Faris'
+
   return (
-    <div onClick={() => onToast && onToast('WhatsApp: +212 6XX XXX XXX')}
-      style={{ position: 'fixed', bottom: 20, right: 14, width: 50, height: 50,
+    <a href={number ? `https://wa.me/${number}?text=${encodeURIComponent(msg)}` : '#'}
+      target="_blank" rel="noopener noreferrer"
+      style={{ position: 'fixed', bottom: 20, right: 14, width: 54, height: 54,
         background: '#25d366', borderRadius: '50%', display: 'flex', alignItems: 'center',
-        justifyContent: 'center', fontSize: 22, cursor: 'pointer', zIndex: 150,
-        boxShadow: '0 4px 14px rgba(37,211,102,.4)' }}>
+        justifyContent: 'center', fontSize: 26, cursor: 'pointer', zIndex: 150,
+        boxShadow: '0 4px 18px rgba(37,211,102,.45)', textDecoration: 'none' }}>
       💬
-    </div>
+    </a>
   )
 }
 
