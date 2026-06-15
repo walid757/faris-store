@@ -58,6 +58,19 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
     return () => document.removeEventListener('mouseleave', onLeave)
   }, [form, ordered])
 
+  // Exit intent (mobile: fast scroll to top after filling form)
+  useEffect(() => {
+    let lastY = window.scrollY
+    const onScroll = () => {
+      const currentY = window.scrollY
+      const delta = lastY - currentY
+      if (currentY < 80 && delta > 40) triggerPopup()
+      lastY = currentY
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [form, ordered])
+
   const toast$ = (msg) => { setToast(msg); setTimeout(() => setToast(''), 2600) }
 
   const handleLogo = () => {
