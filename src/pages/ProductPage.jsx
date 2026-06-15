@@ -23,6 +23,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
   const logoTimer              = useRef(null)
   const inactiveTimer          = useRef(null)
   const popupShown             = useRef(false)
+  const failedAttempts         = useRef(0)
 
   // All images: slider + lifestyle
   const allImgs = [...prod.imgs, ...prod.lifestyle]
@@ -79,7 +80,12 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
 
   const commander = async () => {
     const e = validate()
-    if (Object.keys(e).length > 0) return setErrs(e)
+    if (Object.keys(e).length > 0) {
+      setErrs(e)
+      failedAttempts.current += 1
+      if (failedAttempts.current >= 2) triggerPopup()
+      return
+    }
     setErrs({})
     setLoading(true)
 
