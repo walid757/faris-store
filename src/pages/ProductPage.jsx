@@ -83,7 +83,10 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
     if (Object.keys(e).length > 0) {
       setErrs(e)
       failedAttempts.current += 1
-      if (failedAttempts.current >= 2) triggerPopup()
+      if (failedAttempts.current >= 2 && !popupShown.current) {
+        popupShown.current = true
+        setPopup(true)
+      }
       return
     }
     setErrs({})
