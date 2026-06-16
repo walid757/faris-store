@@ -147,7 +147,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
 
       {/* Background image overlay */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 0,
-        backgroundImage: 'url(https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=60)',
+        backgroundImage: 'url(https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=900&q=80)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         filter: 'brightness(.22) sepia(.6)' }} />
 
