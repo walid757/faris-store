@@ -140,46 +140,100 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
 
   // ── CONFIRMATION ─────────────────────────────────────────────
   if (ordered) return (
-    <div style={{ ...AF, background: 'white', maxWidth: 780, margin: '0 auto' }}>
-      <Marquee lang={lang} />
-      <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center',
-        justifyContent: 'center', background: '#f5f3ef', padding: 20 }}>
-        <div style={{ background: 'white', padding: '36px 24px', textAlign: 'center',
-          maxWidth: 380, width: '100%', boxShadow: '0 8px 40px rgba(0,0,0,.08)' }}>
-          <div style={{ fontSize: 52, marginBottom: 12 }}>🎉</div>
-          <div style={{ fontFamily: "'Pinyon Script',cursive", fontSize: 34, color: C.T, marginBottom: 7 }}>Faris</div>
-          <h2 style={{ ...AF, fontWeight: 900, fontSize: 22, marginBottom: 10 }}>{tr.confirmed}</h2>
-          <p style={{ ...AF, fontSize: 13, color: '#666', lineHeight: 1.8, marginBottom: 14 }}>
-            {tr.confirmedSub}
-          </p>
-          <div style={{ background: '#f8f6f2', padding: '12px', marginBottom: 16,
-            textAlign: lang === 'ar' ? 'right' : 'left', borderLeft: `3px solid ${C.T}` }}>
-            {[
-              [prod.nom[lang] || prod.nom.fr, lang === 'fr' ? 'Produit' : 'المنتج'],
-              [prod.couleurs[color], lang === 'fr' ? 'Couleur' : 'اللون'],
-              ...(size ? [[`EU ${size}`, lang === 'fr' ? 'Pointure' : 'المقاس']] : []),
-              [form.tel,   lang === 'fr' ? 'Tél' : 'الهاتف'],
-              [form.ville, lang === 'fr' ? 'Ville' : 'المدينة'],
-              [`${prod.prix} ${tr.currency}`, lang === 'fr' ? 'Total' : 'الإجمالي'],
-            ].map(([v, k]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between',
-                padding: '5px 0', borderBottom: '1px solid #ede8e0',
-                fontFamily: 'Inter,sans-serif', fontSize: 12 }}>
-                <span style={{ color: '#aaa' }}>{k}</span>
-                <span style={{ fontWeight: 600, color: C.DK }}>{v}</span>
-              </div>
-            ))}
-          </div>
-          <div style={{ background: '#e8f5e9', padding: '10px 12px', ...AF,
-            fontSize: 12, color: '#2e7d32', marginBottom: 16, borderRadius: 2 }}>
-            {lang === 'fr' ? '📞 Notre équipe vous contacte dans les 24h.' : '📞 سيتصل بك فريقنا خلال 24 ساعة.'}
-          </div>
-          <button onClick={() => { setOrdered(false); setForm({ nom:'', tel:'', adresse:'', ville:'' }); setSize(null); onBack() }}
-            style={{ padding: '12px 22px', background: C.DK, color: 'white', fontSize: 12,
-              ...AF, fontWeight: 700, border: 'none', cursor: 'pointer', letterSpacing: 1 }}>
-            {tr.backToShop}
-          </button>
+    <div style={{ minHeight: '100vh', direction: 'rtl', fontFamily: 'Tajawal,Cairo,sans-serif',
+      background: '#0f0a06', color: 'white', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', padding: '40px 20px', textAlign: 'center',
+      position: 'relative', overflow: 'hidden' }}>
+
+      {/* Background image overlay */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0,
+        backgroundImage: 'url(https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=60)',
+        backgroundSize: 'cover', backgroundPosition: 'center',
+        filter: 'brightness(.22) sepia(.6)' }} />
+
+      {/* Gradient overlay */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 1,
+        background: 'linear-gradient(to bottom, rgba(15,10,6,.5) 0%, rgba(15,10,6,.85) 100%)' }} />
+
+      <div style={{ position: 'relative', zIndex: 2, maxWidth: 480, width: '100%' }}>
+
+        {/* Leaf + Title */}
+        <div style={{ fontSize: 36, marginBottom: 4 }}>🌿</div>
+        <h1 style={{ fontSize: 'clamp(42px,10vw,68px)', fontWeight: 900, margin: '0 0 6px',
+          background: 'linear-gradient(135deg, #d4a843, #f5d78e, #b8860b)',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          شكراً لك
+        </h1>
+        <div style={{ fontSize: 22, fontWeight: 700, color: '#f0e0c0', marginBottom: 28,
+          letterSpacing: 1 }}>
+          طلبك تم بنجاح ✨
         </div>
+
+        {/* Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
+          <div style={{ flex: 1, height: 1, background: 'linear-gradient(to left, #8b6914, transparent)' }} />
+          <span style={{ color: '#d4a843', fontSize: 18 }}>❖</span>
+          <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, #8b6914, transparent)' }} />
+        </div>
+
+        {/* Paragraph 1 */}
+        <p style={{ fontSize: 15, lineHeight: 2, color: '#e8d5b5', marginBottom: 20, fontWeight: 400 }}>
+          اليوم لم تشترِ مجرد حذاء جلدي..
+          <br />
+          لقد ساهمت في الحفاظ على حرفة مغربية عريقة توارثها الحرفيون جيلاً بعد جيل،
+          وفي دعم أيادٍ ماهرة تواصل صناعة منتجات جلدية أصيلة بكل فخر وإتقان.
+        </p>
+
+        {/* Paragraph 2 */}
+        <p style={{ fontSize: 14, lineHeight: 2, color: '#c8b89a', marginBottom: 32 }}>
+          كل غرزة، وكل قطعة جلد، وكل تفصيل في حذائك تحمل ساعات من العمل اليدوي
+          والخبرة المتراكمة، لتصل إليك قطعة تجمع بين الأناقة والتراث والجودة.
+        </p>
+
+        {/* Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+          <div style={{ flex: 1, height: 1, background: 'linear-gradient(to left, #8b6914, transparent)' }} />
+          <span style={{ color: '#d4a843', fontSize: 18 }}>❖</span>
+          <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, #8b6914, transparent)' }} />
+        </div>
+
+        {/* Thank you + Customer name */}
+        <div style={{ fontSize: 16, color: '#d4b896', marginBottom: 12, fontWeight: 500 }}>
+          شكراً لك سيدي
+        </div>
+        <div style={{ border: '2px solid #d4a843', borderRadius: 8, padding: '14px 32px',
+          display: 'inline-block', marginBottom: 28,
+          background: 'linear-gradient(135deg, rgba(212,168,67,.08), rgba(212,168,67,.02))' }}>
+          <span style={{ fontSize: 26, fontWeight: 900, color: '#f5d78e', letterSpacing: 1 }}>
+            {form.nom}
+          </span>
+        </div>
+
+        {/* Tagline */}
+        <div style={{ fontSize: 14, color: '#a08060', fontStyle: 'italic', marginBottom: 36 }}>
+          بدعمك، تستمر الحرفة ... ويستمر الأثر.
+        </div>
+
+        {/* Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
+          <div style={{ flex: 1, height: 1, background: 'rgba(212,168,67,.3)' }} />
+          <span style={{ color: '#d4a843', fontSize: 14 }}>🌿</span>
+          <div style={{ flex: 1, height: 1, background: 'rgba(212,168,67,.3)' }} />
+        </div>
+
+        {/* Contact note */}
+        <div style={{ fontSize: 13, color: '#a09080', marginBottom: 28, lineHeight: 1.8 }}>
+          📞 سيتصل بك فريقنا خلال 24 ساعة لتأكيد التوصيل
+        </div>
+
+        {/* Back button */}
+        <button onClick={() => { setOrdered(false); setForm({ nom:'', tel:'', adresse:'', ville:'' }); setSize(null); onBack() }}
+          style={{ padding: '13px 32px', background: 'linear-gradient(135deg,#d4a843,#b8860b)',
+            color: '#1a0f00', fontSize: 14, fontFamily: 'Tajawal,sans-serif',
+            fontWeight: 900, border: 'none', cursor: 'pointer', borderRadius: 8,
+            letterSpacing: 1, boxShadow: '0 4px 20px rgba(212,168,67,.35)' }}>
+          العودة للمتجر
+        </button>
       </div>
     </div>
   )
