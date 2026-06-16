@@ -139,119 +139,109 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
   }
 
   // ── CONFIRMATION ─────────────────────────────────────────────
+  const isFemale = /[ةىاء]$/.test(form.nom.trim())
+  const divider = (
+    <div style={{ display:'flex', alignItems:'center', gap:10, margin:'20px 0' }}>
+      <div style={{ flex:1, height:1, background:'linear-gradient(to left,#8b6914,transparent)' }}/>
+      <span style={{ color:'#d4a843', fontSize:16 }}>❖</span>
+      <div style={{ flex:1, height:1, background:'linear-gradient(to right,#8b6914,transparent)' }}/>
+    </div>
+  )
+
   if (ordered) return (
-    <div style={{ minHeight: '100vh', direction: 'rtl', fontFamily: 'Tajawal,Cairo,sans-serif',
-      background: '#0f0a06', color: 'white', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', padding: '40px 20px', textAlign: 'center',
-      position: 'relative', overflow: 'hidden' }}>
+    <div style={{ minHeight:'100vh', direction:'rtl', fontFamily:'Tajawal,Cairo,sans-serif',
+      background:'#0f0a06', color:'white', position:'relative', overflowX:'hidden' }}>
 
-      {/* Background image overlay */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0,
-        backgroundImage: 'url(https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=900&q=80)',
-        backgroundSize: 'cover', backgroundPosition: 'center',
-        filter: 'brightness(.22) sepia(.6)' }} />
+      {/* Background craftsmen image */}
+      <img src="https://images.unsplash.com/photo-1504200150580-c3b87a9e2f9d?w=900&q=80"
+        onError={e => { e.target.src='https://images.unsplash.com/photo-1617137968427-85924c800a22?w=900&q=80' }}
+        alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%',
+          objectFit:'cover', objectPosition:'center', zIndex:0,
+          filter:'brightness(.25) sepia(.7)' }} />
 
-      {/* Gradient overlay */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 1,
-        background: 'linear-gradient(to bottom, rgba(15,10,6,.5) 0%, rgba(15,10,6,.85) 100%)' }} />
+      {/* Dark gradient overlay */}
+      <div style={{ position:'absolute', inset:0, zIndex:1,
+        background:'linear-gradient(to bottom, rgba(10,6,2,.4) 0%, rgba(10,6,2,.88) 60%, rgba(10,6,2,.97) 100%)' }} />
 
-      {/* Handwritten note - bottom left like real paper */}
-      <div style={{ position: 'absolute', bottom: 20, left: 14, zIndex: 3,
-        transform: 'rotate(-6deg)', width: 130,
-        background: '#f2e4c4',
-        boxShadow: '4px 5px 20px rgba(0,0,0,.6)',
-        padding: '18px 14px 14px',
-        clipPath: 'polygon(0 0,100% 0,100% 88%,88% 100%,0 100%)' }}>
-
-        <div style={{ fontFamily: 'Tajawal,Cairo,sans-serif', direction: 'rtl',
-          textAlign: 'center', color: '#2c1a08', lineHeight: 2.2 }}>
-          <div style={{ fontSize: 13, fontWeight: 500 }}>من قلب الحرفة</div>
-          <div style={{ fontSize: 13, fontWeight: 500 }}>إلى قلبك ♡</div>
-          <div style={{ borderTop: '1px solid rgba(80,50,10,.2)', marginTop: 4, paddingTop: 8,
-            fontFamily: "'Pinyon Script',cursive", fontSize: 24, color: '#4a2e0a',
-            lineHeight: 1 }}>
+      {/* Handwritten note — bottom left */}
+      <div style={{ position:'absolute', bottom:100, left:10, zIndex:4,
+        transform:'rotate(-8deg)', width:118,
+        background:'linear-gradient(160deg,#f5e8c8,#eeddb0)',
+        boxShadow:'4px 6px 22px rgba(0,0,0,.7)',
+        padding:'16px 12px 12px',
+        clipPath:'polygon(0 0,100% 0,100% 86%,86% 100%,0 100%)' }}>
+        <div style={{ textAlign:'center', color:'#2c1a08', direction:'rtl' }}>
+          <div style={{ fontSize:12, fontWeight:600, lineHeight:2 }}>من قلب الحرفة</div>
+          <div style={{ fontSize:12, fontWeight:600, lineHeight:2 }}>إلى قلبك ♡</div>
+          <div style={{ borderTop:'1px solid rgba(80,50,10,.25)', marginTop:6, paddingTop:6,
+            fontFamily:"'Pinyon Script',cursive", fontSize:22, color:'#4a2e0a', lineHeight:1.2 }}>
             شكراً لك
           </div>
         </div>
       </div>
 
-      <div style={{ position: 'relative', zIndex: 2, maxWidth: 480, width: '100%' }}>
+      {/* Main content */}
+      <div style={{ position:'relative', zIndex:2, maxWidth:480, margin:'0 auto',
+        padding:'44px 22px 110px', textAlign:'center' }}>
 
-        {/* Leaf + Title */}
-        <div style={{ fontSize: 36, marginBottom: 4 }}>🌿</div>
-        <h1 style={{ fontSize: 'clamp(42px,10vw,68px)', fontWeight: 900, margin: '0 0 6px',
-          background: 'linear-gradient(135deg, #d4a843, #f5d78e, #b8860b)',
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <div style={{ fontSize:34, marginBottom:2 }}>🌿</div>
+        <h1 style={{ fontSize:'clamp(44px,12vw,70px)', fontWeight:900, margin:'0 0 4px',
+          background:'linear-gradient(135deg,#d4a843,#f5d78e,#b8860b)',
+          WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', lineHeight:1.1 }}>
           شكراً لك
         </h1>
-        <div style={{ fontSize: 22, fontWeight: 700, color: '#f0e0c0', marginBottom: 28,
-          letterSpacing: 1 }}>
-          طلبك تم بنجاح ✨
+        <div style={{ fontSize:20, fontWeight:700, color:'#f0e0c0', marginBottom:4 }}>
+          طلبك تم بنجاح
         </div>
 
-        {/* Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
-          <div style={{ flex: 1, height: 1, background: 'linear-gradient(to left, #8b6914, transparent)' }} />
-          <span style={{ color: '#d4a843', fontSize: 18 }}>❖</span>
-          <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, #8b6914, transparent)' }} />
-        </div>
+        {divider}
 
-        {/* Paragraph 1 */}
-        <p style={{ fontSize: 15, lineHeight: 2, color: '#e8d5b5', marginBottom: 20, fontWeight: 400 }}>
+        <p style={{ fontSize:15, lineHeight:2.1, color:'#e8d5b5', margin:'0 0 6px' }}>
           اليوم لم تشترِ مجرد حذاء جلدي..
-          <br />
+        </p>
+        <p style={{ fontSize:14, lineHeight:2.1, color:'#e0ccaa', margin:'0 0 4px' }}>
           لقد ساهمت في الحفاظ على حرفة مغربية عريقة توارثها الحرفيون جيلاً بعد جيل،
           وفي دعم أيادٍ ماهرة تواصل صناعة منتجات جلدية أصيلة بكل فخر وإتقان.
         </p>
 
-        {/* Paragraph 2 */}
-        <p style={{ fontSize: 14, lineHeight: 2, color: '#c8b89a', marginBottom: 32 }}>
+        {divider}
+
+        <p style={{ fontSize:14, lineHeight:2.1, color:'#c8b89a', margin:'0' }}>
           كل غرزة، وكل قطعة جلد، وكل تفصيل في حذائك تحمل ساعات من العمل اليدوي
           والخبرة المتراكمة، لتصل إليك قطعة تجمع بين الأناقة والتراث والجودة.
         </p>
 
-        {/* Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-          <div style={{ flex: 1, height: 1, background: 'linear-gradient(to left, #8b6914, transparent)' }} />
-          <span style={{ color: '#d4a843', fontSize: 18 }}>❖</span>
-          <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, #8b6914, transparent)' }} />
+        {divider}
+
+        <div style={{ fontSize:15, color:'#d4b896', marginBottom:10, fontWeight:500 }}>
+          {isFemale ? 'شكراً لك سيدتي' : 'شكراً لك سيدي'}
         </div>
 
-        {/* Thank you + Customer name */}
-        <div style={{ fontSize: 16, color: '#d4b896', marginBottom: 12, fontWeight: 500 }}>
-          {/[ةىاء]$/.test(form.nom.trim()) ? 'شكراً لك سيدتي' : 'شكراً لك سيدي'}
-        </div>
-        <div style={{ border: '2px solid #d4a843', borderRadius: 8, padding: '14px 32px',
-          display: 'inline-block', marginBottom: 28,
-          background: 'linear-gradient(135deg, rgba(212,168,67,.08), rgba(212,168,67,.02))' }}>
-          <span style={{ fontSize: 26, fontWeight: 900, color: '#f5d78e', letterSpacing: 1 }}>
-            {form.nom}
-          </span>
+        {/* Name frame — like certificate */}
+        <div style={{ border:'1px solid #8b6914', padding:'2px', display:'inline-block',
+          marginBottom:16, background:'linear-gradient(135deg,rgba(212,168,67,.06),transparent)' }}>
+          <div style={{ border:'1px solid rgba(212,168,67,.4)', padding:'12px 36px' }}>
+            <div style={{ fontSize:26, fontWeight:900, color:'#f5d78e', letterSpacing:2 }}>
+              {form.nom}
+            </div>
+          </div>
         </div>
 
-        {/* Tagline */}
-        <div style={{ fontSize: 14, color: '#a08060', fontStyle: 'italic', marginBottom: 36 }}>
+        <div style={{ fontSize:14, color:'#9a7a50', marginBottom:20 }}>
           بدعمك، تستمر الحرفة ... ويستمر الأثر.
         </div>
 
-        {/* Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
-          <div style={{ flex: 1, height: 1, background: 'rgba(212,168,67,.3)' }} />
-          <span style={{ color: '#d4a843', fontSize: 14 }}>🌿</span>
-          <div style={{ flex: 1, height: 1, background: 'rgba(212,168,67,.3)' }} />
-        </div>
+        <div style={{ fontSize:22, color:'#d4a843', marginBottom:24 }}>🏺</div>
 
-        {/* Contact note */}
-        <div style={{ fontSize: 13, color: '#a09080', marginBottom: 28, lineHeight: 1.8 }}>
+        <div style={{ fontSize:12, color:'#7a6050', marginBottom:28 }}>
           📞 سيتصل بك فريقنا خلال 24 ساعة لتأكيد التوصيل
         </div>
 
-        {/* Back button */}
-        <button onClick={() => { setOrdered(false); setForm({ nom:'', tel:'', adresse:'', ville:'' }); setSize(null); onBack() }}
-          style={{ padding: '13px 32px', background: 'linear-gradient(135deg,#d4a843,#b8860b)',
-            color: '#1a0f00', fontSize: 14, fontFamily: 'Tajawal,sans-serif',
-            fontWeight: 900, border: 'none', cursor: 'pointer', borderRadius: 8,
-            letterSpacing: 1, boxShadow: '0 4px 20px rgba(212,168,67,.35)' }}>
+        <button onClick={() => { setOrdered(false); setForm({nom:'',tel:'',adresse:'',ville:''}); setSize(null); onBack() }}
+          style={{ padding:'13px 36px', background:'linear-gradient(135deg,#d4a843,#b8860b)',
+            color:'#1a0f00', fontSize:14, fontFamily:'Tajawal,sans-serif', fontWeight:900,
+            border:'none', cursor:'pointer', borderRadius:6, letterSpacing:1,
+            boxShadow:'0 4px 20px rgba(212,168,67,.4)' }}>
           العودة للمتجر
         </button>
       </div>
