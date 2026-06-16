@@ -163,22 +163,6 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
       <div style={{ position:'absolute', inset:0, zIndex:1,
         background:'linear-gradient(to bottom, rgba(10,6,2,.4) 0%, rgba(10,6,2,.88) 60%, rgba(10,6,2,.97) 100%)' }} />
 
-      {/* Handwritten note — bottom left */}
-      <div style={{ position:'absolute', bottom:100, left:10, zIndex:4,
-        transform:'rotate(-8deg)', width:118,
-        background:'linear-gradient(160deg,#f5e8c8,#eeddb0)',
-        boxShadow:'4px 6px 22px rgba(0,0,0,.7)',
-        padding:'16px 12px 12px',
-        clipPath:'polygon(0 0,100% 0,100% 86%,86% 100%,0 100%)' }}>
-        <div style={{ textAlign:'center', color:'#2c1a08', direction:'rtl' }}>
-          <div style={{ fontSize:12, fontWeight:600, lineHeight:2 }}>من قلب الحرفة</div>
-          <div style={{ fontSize:12, fontWeight:600, lineHeight:2 }}>إلى قلبك ♡</div>
-          <div style={{ borderTop:'1px solid rgba(80,50,10,.25)', marginTop:6, paddingTop:6,
-            fontFamily:"'Pinyon Script',cursive", fontSize:22, color:'#4a2e0a', lineHeight:1.2 }}>
-            شكراً لك
-          </div>
-        </div>
-      </div>
 
       {/* Main content */}
       <div style={{ position:'relative', zIndex:2, maxWidth:480, margin:'0 auto',
