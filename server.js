@@ -277,8 +277,9 @@ app.get('/api/admin/stats', adminAuth, (req, res) => {
 // ── SERVE FRONTEND ────────────────────────────────────────────
 const distPath = path.join(__dirname, 'dist')
 if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath))
+  app.use(express.static(distPath, { etag: false, maxAge: 0 }))
   app.get('*', (req, res) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
     res.sendFile(path.join(distPath, 'index.html'))
   })
 } else {
