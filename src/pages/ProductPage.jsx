@@ -155,6 +155,16 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
       <div style={{ position: 'absolute', inset: 0, zIndex: 1,
         background: 'linear-gradient(to bottom, rgba(15,10,6,.5) 0%, rgba(15,10,6,.85) 100%)' }} />
 
+      {/* Handwritten note - bottom left */}
+      <div style={{ position: 'absolute', bottom: 28, left: 20, zIndex: 3,
+        fontFamily: "'Pinyon Script', cursive", color: 'rgba(240,220,180,.75)',
+        textAlign: 'center', lineHeight: 1.9, fontSize: 15,
+        textShadow: '1px 1px 4px rgba(0,0,0,.5)' }}>
+        من قلب الحرفة<br />
+        إلى قلبك ♡<br />
+        <span style={{ fontSize: 20 }}>شكراً لك</span>
+      </div>
+
       <div style={{ position: 'relative', zIndex: 2, maxWidth: 480, width: '100%' }}>
 
         {/* Leaf + Title */}
