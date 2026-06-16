@@ -219,7 +219,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
 
         {/* Thank you + Customer name */}
         <div style={{ fontSize: 16, color: '#d4b896', marginBottom: 12, fontWeight: 500 }}>
-          شكراً لك سيدي
+          {/[ةىاء]$/.test(form.nom.trim()) ? 'شكراً لك سيدتي' : 'شكراً لك سيدي'}
         </div>
         <div style={{ border: '2px solid #d4a843', borderRadius: 8, padding: '14px 32px',
           display: 'inline-block', marginBottom: 28,
