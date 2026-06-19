@@ -123,7 +123,7 @@ export default function HomePage({ lang = 'fr', onLangToggle, onProduct, onAdmin
             <div key={p.id} onClick={() => onProduct(p.slug)}
               style={{ cursor: 'pointer', marginBottom: 22 }}>
               <div style={{ overflow: 'hidden', background: '#f0ede8', aspectRatio: '3/4' }}>
-                <img src={p.imgs[0]} alt={p.nom.fr}
+                <img src={p.imgs[0]} alt={p.nom.fr} loading="lazy"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block',
                     transition: 'transform .5s' }}
                   onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
@@ -183,7 +183,7 @@ export default function HomePage({ lang = 'fr', onLangToggle, onProduct, onAdmin
             </div>
           </div>
           <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80"
-            alt="Artisan" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
+            alt="Artisan" loading="lazy" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
         </div>
       </div>
 

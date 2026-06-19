@@ -292,7 +292,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
             <div key={i} onClick={() => setSlide(i)}
               style={{ flexShrink: 0, width: 68, height: 50, overflow: 'hidden', cursor: 'pointer',
                 border: `2px solid ${i === slide ? C.T : 'transparent'}`, transition: 'border .15s' }}>
-              <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover',
+              <img src={src} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover',
                 display: 'block', filter: i === slide ? 'none' : 'brightness(.85)' }} />
             </div>
           ))}
@@ -408,7 +408,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
             <div>
               {prod.lifestyle.slice(0, 2).map((src, i) => (
                 <div key={i} style={{ marginTop: i > 0 ? 2 : 0 }}>
-                  <img src={src} alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                  <img src={src} alt="" loading="lazy" style={{ width: '100%', height: 'auto', display: 'block' }} />
                   <div style={{ background: '#3D2310', padding: '10px 14px', textAlign: 'center' }}>
                     <div style={{ fontSize: 9, letterSpacing: 3, color: C.GD,
                       fontFamily: 'Inter,sans-serif', fontWeight: 700 }}>
@@ -437,7 +437,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         {/* HOOK 02 */}
         {prod.lifestyle.length >= 1 && (
           <div style={{ margin: '0 -14px' }}>
-            <img src={prod.lifestyle[0]} alt="" style={{ width: '100%', aspectRatio: '16/9',
+            <img src={prod.lifestyle[0]} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '16/9',
               objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
             <div style={{ background: '#3D2310', padding: '24px 18px 26px' }}>
               <div style={{ fontSize: 9, letterSpacing: 4, color: C.GD, fontFamily: 'Inter,sans-serif',
@@ -477,7 +477,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
             </h2>
           </div>
           {prod.imgs.length > 1 && (
-            <img src={prod.imgs[1]} alt="" style={{ width: '100%', aspectRatio: '16/9',
+            <img src={prod.imgs[1]} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '16/9',
               objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
           )}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1,
