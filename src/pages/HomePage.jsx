@@ -14,9 +14,9 @@ export default function HomePage({ lang = 'fr', onLangToggle, onProduct, onAdmin
   const tr                       = t(lang)
 
   const HERO_IMGS = [
-    'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800&q=75',
-    'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800&q=75',
-    'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=800&q=75',
+    'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1200&q=80',
+    'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=1200&q=80',
+    'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=1200&q=80',
   ]
 
   useEffect(() => {
@@ -52,11 +52,8 @@ export default function HomePage({ lang = 'fr', onLangToggle, onProduct, onAdmin
         {HERO_IMGS.map((src, i) => (
           <div key={i} style={{ position: 'absolute', inset: 0, opacity: i === slide ? 1 : 0,
             transition: 'opacity .7s ease', pointerEvents: i === slide ? 'auto' : 'none' }}>
-            <img src={src} alt=""
-              fetchpriority={i === 0 ? 'high' : 'low'}
-              loading={i === 0 ? 'eager' : 'lazy'}
-              style={{ width: '100%', height: '100%', objectFit: 'cover',
-                objectPosition: 'center', display: 'block' }} />
+            <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover',
+              objectPosition: 'center', display: 'block' }} />
           </div>
         ))}
         <div style={{ position: 'absolute', inset: 0,
