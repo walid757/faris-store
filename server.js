@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
+const helmet = require('helmet')
 const path = require('path')
 const fs = require('fs')
 const rateLimit = require('express-rate-limit')
@@ -88,8 +89,18 @@ if (!fs.existsSync(FILES.stats))   writeJSON(FILES.stats,   { visits: 0, orders:
 
 // ── MIDDLEWARE ───────────────────────────────────────────────
 app.set('trust proxy', 1)
-app.use(cors())
-app.use(express.json())
+
+app.use(helmet({ contentSecurityPolicy: false }))
+
+app.use(cors({
+  origin: [
+    'https://faris-store-production.up.railway.app',
+    'http://localhost:5173',
+    'http://localhost:5000'
+  ]
+}))
+
+app.use(express.json({ limit: '10kb' }))
 
 const getClientIP = (req) =>
   req.headers['x-forwarded-for']?.split(',')[0].trim() ||
@@ -97,11 +108,18 @@ const getClientIP = (req) =>
   req.ip ||
   req.connection.remoteAddress
 
-// Rate limiting: max 5 orders per hour per IP
+// Rate limiting: max 3 orders per day per IP
 const orderLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: 5,
-  message: { error: 'Trop de tentatives. Veuillez reessayer dans 1 heure.' }
+  windowMs: 24 * 60 * 60 * 1000,
+  max: 3,
+  message: { error: 'Trop de tentatives. Veuillez reessayer demain.' }
+})
+
+// Rate limiting: max 10 admin attempts per 15 min
+const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Trop de tentatives admin.' }
 })
 
 // IP Blocking middleware
@@ -200,7 +218,7 @@ app.post('/api/orders', orderLimiter, (req, res) => {
 })
 
 // ── ADMIN AUTH ────────────────────────────────────────────────
-app.post('/api/admin/auth', (req, res) => {
+app.post('/api/admin/auth', adminLimiter, (req, res) => {
   const { password } = req.body
   if (password === ADMIN_PASSWORD) {
     res.json({ success: true, token: 'faris_admin_' + Date.now() })
