@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { t } from '../data/translations.js'
 
-const C = { T: '#1d6475', GD: '#b8935a', DK: '#1a1a1a', CR: '#f5f3ef' }
+const C = { T: '#A0714F', GD: '#C9A077', DK: '#2C1A0E', CR: '#E8D5B7' }
 
 // ── MARQUEE ────────────────────────────────────────────────────
 export function Marquee({ lang = 'fr' }) {
@@ -16,8 +16,8 @@ export function Marquee({ lang = 'fr' }) {
   }, [])
 
   return (
-    <div style={{ background: '#1a1a1a', overflow: 'hidden', whiteSpace: 'nowrap',
-      padding: '9px 0', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
+    <div style={{ background: 'linear-gradient(90deg,#3D2310,#6B3A1F,#3D2310)', overflow: 'hidden', whiteSpace: 'nowrap',
+      padding: '9px 0', borderBottom: '1px solid rgba(201,160,119,.25)' }}>
       <div style={{ display: 'inline-block', animation: 'faris-scroll 32s linear infinite' }}>
         <span style={{ fontFamily: lang === 'ar' ? 'Tajawal,sans-serif' : 'Inter,sans-serif',
           fontSize: 12, color: 'rgba(255,255,255,.85)', letterSpacing: .3 }}>
@@ -33,7 +33,7 @@ export function Header({ lang = 'fr', onHome, logoClicks, onLogoClick, onLangTog
   const tr = t(lang)
 
   return (
-    <div style={{ background: 'white', borderBottom: '1px solid #f0ebe3',
+    <div style={{ background: '#FDF8F0', borderBottom: '1px solid #DCC9A8',
       padding: '11px 16px', display: 'flex', alignItems: 'center',
       justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100,
       boxShadow: '0 1px 8px rgba(0,0,0,.06)', direction: tr.dir }}>

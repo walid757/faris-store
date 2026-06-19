@@ -253,7 +253,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
       </div>
 
       {/* SLIDER */}
-      <div style={{ background: '#0a0a0a', overflow: 'hidden' }}>
+      <div style={{ background: '#2C1A0E', overflow: 'hidden' }}>
         <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden' }}>
           {allImgs.map((src, i) => (
             <div key={i} style={{ position: 'absolute', inset: 0, opacity: i === slide ? 1 : 0,
@@ -393,7 +393,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         </div>
 
         {/* HOOK 01 */}
-        <div style={{ margin: '0 -14px', background: '#0a0a0a' }}>
+        <div style={{ margin: '0 -14px', background: '#2C1A0E' }}>
           <div style={{ padding: '24px 18px 18px', textAlign: 'center' }}>
             <div style={{ fontSize: 9, letterSpacing: 4, color: C.GD, fontFamily: 'Inter,sans-serif',
               fontWeight: 700, marginBottom: 6 }}>
@@ -409,7 +409,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
               {prod.lifestyle.slice(0, 2).map((src, i) => (
                 <div key={i} style={{ marginTop: i > 0 ? 2 : 0 }}>
                   <img src={src} alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />
-                  <div style={{ background: '#111', padding: '10px 14px', textAlign: 'center' }}>
+                  <div style={{ background: '#3D2310', padding: '10px 14px', textAlign: 'center' }}>
                     <div style={{ fontSize: 9, letterSpacing: 3, color: C.GD,
                       fontFamily: 'Inter,sans-serif', fontWeight: 700 }}>
                       {i === 0 ? (lang === 'fr' ? 'NATURE' : 'الطبيعة') : (lang === 'fr' ? 'URBAN' : 'المدينة')}
@@ -439,7 +439,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
           <div style={{ margin: '0 -14px' }}>
             <img src={prod.lifestyle[0]} alt="" style={{ width: '100%', aspectRatio: '16/9',
               objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
-            <div style={{ background: '#111', padding: '24px 18px 26px' }}>
+            <div style={{ background: '#3D2310', padding: '24px 18px 26px' }}>
               <div style={{ fontSize: 9, letterSpacing: 4, color: C.GD, fontFamily: 'Inter,sans-serif',
                 fontWeight: 700, marginBottom: 10 }}>
                 {lang === 'fr' ? 'HOOK #02 · SAVOIR-FAIRE' : 'الميزة الثانية · الحرفية'}

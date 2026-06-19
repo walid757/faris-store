@@ -156,7 +156,7 @@ export default function HomePage({ lang = 'fr', onLangToggle, onProduct, onAdmin
       </div>
 
       {/* ARTISAN BLOCK */}
-      <div style={{ background: '#2d2010', margin: '44px 0 0', padding: '44px 20px' }}>
+      <div style={{ background: '#3D2310', margin: '44px 0 0', padding: '44px 20px' }}>
         <div style={{ maxWidth: 780, margin: '0 auto', display: 'grid',
           gridTemplateColumns: '1fr 1fr', gap: 0 }}>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -188,7 +188,7 @@ export default function HomePage({ lang = 'fr', onLangToggle, onProduct, onAdmin
       </div>
 
       {/* FOOTER */}
-      <footer style={{ background: '#111', padding: '36px 20px 20px' }}>
+      <footer style={{ background: '#2C1A0E', padding: '36px 20px 20px' }}>
         <div style={{ maxWidth: 780, margin: '0 auto' }}>
           <div style={{ fontFamily: "'Pinyon Script',cursive", fontSize: 28, color: 'white',
             marginBottom: 4, textAlign: 'center' }}>Faris</div>
