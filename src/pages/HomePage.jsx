@@ -99,51 +99,61 @@ export default function HomePage({ lang = 'fr', onLangToggle, onProduct, onAdmin
       </div>
 
       {/* CATALOGUE */}
-      <div id="catalogue" style={{ maxWidth: 780, margin: '0 auto', padding: '44px 16px 0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          marginBottom: 20, flexWrap: 'wrap', gap: 10 }}>
-          <h2 style={{ fontFamily: 'Georgia,serif', fontSize: 24, fontWeight: 600 }}>
-            {filter === 'TOUS' ? tr.collection : filter}
-          </h2>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {CATS.map(f => (
-              <button key={f} onClick={() => setFilter(f)}
-                style={{ padding: '5px 11px', fontSize: 11, fontFamily: 'Inter,sans-serif',
-                  fontWeight: 600, background: filter === f ? C.DK : 'white',
-                  color: filter === f ? 'white' : '#666',
-                  border: `1px solid ${filter === f ? C.DK : '#ddd'}`,
-                  cursor: 'pointer', letterSpacing: .5 }}>
-                {f}
-              </button>
-            ))}
+      <div id="catalogue" style={{ background: '#F7F5F2', padding: '44px 0 0' }}>
+        <div style={{ maxWidth: 780, margin: '0 auto', padding: '0 16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            marginBottom: 24, flexWrap: 'wrap', gap: 10 }}>
+            <h2 style={{ fontFamily: 'Inter,sans-serif', fontSize: 13, fontWeight: 700,
+              letterSpacing: 3, color: '#888' }}>
+              {filter === 'TOUS' ? tr.collection : filter}
+            </h2>
+            <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+              {CATS.map(f => (
+                <button key={f} onClick={() => setFilter(f)}
+                  style={{ padding: '6px 13px', fontSize: 11, fontFamily: 'Inter,sans-serif',
+                    fontWeight: 600, background: filter === f ? '#1a1a1a' : 'transparent',
+                    color: filter === f ? 'white' : '#999',
+                    border: `1px solid ${filter === f ? '#1a1a1a' : '#ddd'}`,
+                    borderRadius: 20, cursor: 'pointer', letterSpacing: .5,
+                    transition: 'all .2s' }}>
+                  {f}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, padding: '0 3px' }}>
           {filtered.map(p => (
             <div key={p.id} onClick={() => onProduct(p.slug)}
-              style={{ cursor: 'pointer', marginBottom: 22 }}>
-              <div style={{ overflow: 'hidden', background: '#f0ede8', aspectRatio: '3/4' }}>
+              style={{ cursor: 'pointer', background: 'white',
+                borderRadius: 12, overflow: 'hidden',
+                boxShadow: '0 2px 12px rgba(0,0,0,.06)',
+                transition: 'transform .25s, box-shadow .25s' }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,.1)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,.06)' }}>
+              <div style={{ overflow: 'hidden', background: '#F0ECE6', aspectRatio: '1/1' }}>
                 <img src={p.imgs[0]} alt={p.nom.fr} loading="lazy"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block',
                     transition: 'transform .5s' }}
-                  onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
+                  onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
                   onMouseLeave={e => e.target.style.transform = 'scale(1)'} />
               </div>
-              <div style={{ paddingTop: 9 }}>
-                <div style={{ fontSize: 10, letterSpacing: 2, color: '#aaa',
-                  fontFamily: 'Inter,sans-serif', fontWeight: 600 }}>
+              <div style={{ padding: '12px 12px 14px' }}>
+                <div style={{ fontSize: 9, letterSpacing: 2, color: '#bbb',
+                  fontFamily: 'Inter,sans-serif', fontWeight: 700, marginBottom: 4 }}>
                   {p.cat[lang] || p.cat.fr}
                 </div>
-                <div style={{ fontFamily: 'Georgia,serif', fontStyle: 'italic', fontSize: 19,
-                  color: C.T, marginTop: 2 }}>
+                <div style={{ fontFamily: 'Inter,sans-serif', fontWeight: 700, fontSize: 13,
+                  color: '#1a1a1a', marginBottom: 6, lineHeight: 1.3 }}>
                   {p.nom[lang] || p.nom.fr}
                 </div>
-                <div style={{ display: 'flex', gap: 8, marginTop: 4, alignItems: 'baseline' }}>
-                  <span style={{ fontSize: 14, fontWeight: 700, fontFamily: 'Inter,sans-serif' }}>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, fontWeight: 800, fontFamily: 'Inter,sans-serif',
+                    color: C.T }}>
                     {p.prix} {tr.currency}
                   </span>
                   {p.old && (
-                    <span style={{ fontSize: 12, color: '#bbb', textDecoration: 'line-through',
+                    <span style={{ fontSize: 11, color: '#ccc', textDecoration: 'line-through',
                       fontFamily: 'Inter,sans-serif' }}>
                       {p.old}
                     </span>
@@ -153,6 +163,7 @@ export default function HomePage({ lang = 'fr', onLangToggle, onProduct, onAdmin
             </div>
           ))}
         </div>
+        <div style={{ height: 40 }} />
       </div>
 
       {/* ARTISAN BLOCK */}
