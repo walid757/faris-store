@@ -95,3 +95,12 @@ export const setTheme = async (active) => {
   });
   return r.json();
 };
+
+export const setProductPage = async (productPage) => {
+  const r = await fetch("/api/admin/theme", {
+    method: "POST",
+    headers: {"Content-Type": "application/json", "x-admin-token": getToken()},
+    body: JSON.stringify({ productPage })
+  });
+  return r.json();
+};
