@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import HomePage from './pages/HomePage.jsx'
+import HomePage    from './pages/HomePage.jsx'
 import ProductPage from './pages/ProductPage.jsx'
-import AdminPage from './pages/AdminPage.jsx'
-import FontLoader from './components/FontLoader.jsx'
+import AdminPage   from './pages/AdminPage.jsx'
+import FontLoader  from './components/FontLoader.jsx'
+import ThemeLuxe   from './themes/ThemeLuxe.jsx'
+import ThemeFlash  from './themes/ThemeFlash.jsx'
+import ThemeStory  from './themes/ThemeStory.jsx'
+import ThemeMinimal from './themes/ThemeMinimal.jsx'
 
 // ── SIMPLE ROUTER ─────────────────────────────────────────────
 const getPage = () => {
@@ -14,16 +18,16 @@ const getPage = () => {
 
 const getSlug = () => window.location.hash.replace('#produit/', '')
 
+const THEMES = { luxe: ThemeLuxe, flash: ThemeFlash, story: ThemeStory, minimal: ThemeMinimal }
+
 export default function App() {
-  const [page, setPage]   = useState(getPage())
-  const [slug, setSlug]   = useState(getSlug())
-  const [lang, setLang]   = useState('fr') // 'fr' | 'ar'
+  const [page,  setPage]  = useState(getPage())
+  const [slug,  setSlug]  = useState(getSlug())
+  const [lang,  setLang]  = useState('fr')
+  const [theme, setTheme] = useState('original')
 
   useEffect(() => {
-    const onHash = () => {
-      setPage(getPage())
-      setSlug(getSlug())
-    }
+    const onHash = () => { setPage(getPage()); setSlug(getSlug()) }
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
@@ -33,27 +37,47 @@ export default function App() {
     fetch('/api/stats/visit', { method: 'POST' }).catch(() => {})
   }, [page])
 
+  // Fetch active theme from server config
+  useEffect(() => {
+    fetch('/api/config')
+      .then(r => r.json())
+      .then(cfg => { if (cfg.theme) setTheme(cfg.theme) })
+      .catch(() => {})
+  }, [])
+
   const nav = {
     home:    () => { window.location.hash = ''; setPage('home') },
     product: (s) => { window.location.hash = '#produit/' + s; setPage('product'); setSlug(s) },
     admin:   () => { window.location.hash = '#admin'; setPage('admin') }
   }
 
-  if (page === 'admin') return <><FontLoader/><AdminPage onBack={nav.home} /></>
+  const langProps = {
+    lang,
+    onLangToggle: () => setLang(l => l === 'fr' ? 'ar' : 'fr')
+  }
+
+  if (page === 'admin') return <><FontLoader/><AdminPage onBack={nav.home} onThemeChange={setTheme} /></>
 
   if (page === 'product') return (
     <ProductPage
       slug={slug || 'rbati'}
-      lang={lang}
-      onLangToggle={() => setLang(l => l === 'fr' ? 'ar' : 'fr')}
+      {...langProps}
       onBack={nav.home}
     />
   )
 
+  // Home — render selected theme or original catalog
+  const ThemeComponent = THEMES[theme]
+  if (ThemeComponent) return (
+    <>
+      <FontLoader />
+      <ThemeComponent {...langProps} onProduct={nav.product} onAdmin={nav.admin} />
+    </>
+  )
+
   return (
     <HomePage
-      lang={lang}
-      onLangToggle={() => setLang(l => l === 'fr' ? 'ar' : 'fr')}
+      {...langProps}
       onProduct={nav.product}
       onAdmin={nav.admin}
     />

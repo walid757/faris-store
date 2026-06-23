@@ -79,3 +79,19 @@ export const getStats = async () => {
   });
   return r.json();
 };
+
+export const getTheme = async () => {
+  const r = await fetch("/api/admin/theme", {
+    headers: {"x-admin-token": getToken()}
+  });
+  return r.json();
+};
+
+export const setTheme = async (active) => {
+  const r = await fetch("/api/admin/theme", {
+    method: "POST",
+    headers: {"Content-Type": "application/json", "x-admin-token": getToken()},
+    body: JSON.stringify({ active })
+  });
+  return r.json();
+};

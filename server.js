@@ -70,7 +70,8 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR)
 const FILES = {
   orders:  path.join(DATA_DIR, 'orders.json'),
   blocked: path.join(DATA_DIR, 'blocked_ips.json'),
-  stats:   path.join(DATA_DIR, 'stats.json')
+  stats:   path.join(DATA_DIR, 'stats.json'),
+  theme:   path.join(DATA_DIR, 'theme.json')
 }
 
 const readJSON = (file, def) => {
@@ -85,6 +86,7 @@ const writeJSON = (file, data) => {
 if (!fs.existsSync(FILES.orders))  writeJSON(FILES.orders,  [])
 if (!fs.existsSync(FILES.blocked)) writeJSON(FILES.blocked, [])
 if (!fs.existsSync(FILES.stats))   writeJSON(FILES.stats,   { visits: 0, orders: 0 })
+if (!fs.existsSync(FILES.theme))   writeJSON(FILES.theme,   { active: 'original' })
 
 // ── MIDDLEWARE ───────────────────────────────────────────────
 app.set('trust proxy', 1)
@@ -119,8 +121,11 @@ app.use('/api/orders', (req, res, next) => {
 // Ping
 app.get('/api/ping', (req, res) => res.json({ status: 'ok', version: '1.0.0' }))
 
-// Public config (whatsapp number for frontend)
-app.get('/api/config', (req, res) => res.json({ whatsapp: WHATSAPP_NUMBER }))
+// Public config (whatsapp number + active theme for frontend)
+app.get('/api/config', (req, res) => {
+  const theme = readJSON(FILES.theme, { active: 'original' })
+  res.json({ whatsapp: WHATSAPP_NUMBER, theme: theme.active })
+})
 
 
 // Stats (page view)
@@ -259,6 +264,19 @@ app.delete('/api/admin/block/:ip', adminAuth, (req, res) => {
 // Get blocked IPs
 app.get('/api/admin/blocked', adminAuth, (req, res) => {
   res.json(readJSON(FILES.blocked, []))
+})
+
+// Get/set active theme
+app.get('/api/admin/theme', adminAuth, (req, res) => {
+  res.json(readJSON(FILES.theme, { active: 'original' }))
+})
+app.post('/api/admin/theme', adminAuth, (req, res) => {
+  const { active } = req.body
+  const allowed = ['original', 'luxe', 'flash', 'story', 'minimal']
+  if (!allowed.includes(active)) return res.status(400).json({ error: 'Thème invalide' })
+  writeJSON(FILES.theme, { active })
+  console.log(`[THEME] Active theme changed to: ${active}`)
+  res.json({ success: true, active })
 })
 
 // Get stats

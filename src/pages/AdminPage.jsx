@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import {
   adminLogin, getOrders, updateOrderStatus,
-  blockIP, unblockIP, getBlockedIPs, getStats
+  blockIP, unblockIP, getBlockedIPs, getStats,
+  getTheme, setTheme
 } from '../api/client.js'
 
 const AD = '#070c18'
@@ -9,31 +10,42 @@ const AB = '#0b1525'
 const AB2 = '#1a2f4a'
 const T = '#1d6475'
 
-export default function AdminPage({ onBack }) {
-  const [auth,    setAuth]    = useState(!!sessionStorage.getItem('faris_admin_token'))
-  const [pass,    setPass]    = useState('')
-  const [tab,     setTab]     = useState('orders')
-  const [orders,  setOrders]  = useState([])
-  const [blocked, setBlocked] = useState([])
-  const [stats,   setStats]   = useState({})
-  const [filter,  setFilter]  = useState('Tous')
-  const [newIP,   setNewIP]   = useState('')
-  const [toast,   setToast]   = useState('')
-  const [loading, setLoading] = useState(false)
+export default function AdminPage({ onBack, onThemeChange }) {
+  const [auth,        setAuth]        = useState(!!sessionStorage.getItem('faris_admin_token'))
+  const [pass,        setPass]        = useState('')
+  const [tab,         setTab]         = useState('orders')
+  const [orders,      setOrders]      = useState([])
+  const [blocked,     setBlocked]     = useState([])
+  const [stats,       setStats]       = useState({})
+  const [filter,      setFilter]      = useState('Tous')
+  const [newIP,       setNewIP]       = useState('')
+  const [toast,       setToast]       = useState('')
+  const [loading,     setLoading]     = useState(false)
+  const [activeTheme, setActiveTheme] = useState('original')
 
   const toast$ = (msg, dur = 2500) => { setToast(msg); setTimeout(() => setToast(''), dur) }
 
   // Load data
   const load = async () => {
     try {
-      const [o, b, s] = await Promise.all([getOrders(), getBlockedIPs(), getStats()])
+      const [o, b, s, th] = await Promise.all([getOrders(), getBlockedIPs(), getStats(), getTheme()])
       if (Array.isArray(o)) setOrders(o)
       if (Array.isArray(b)) setBlocked(b)
       if (s.total !== undefined) setStats(s)
+      if (th.active) setActiveTheme(th.active)
     } catch { toast$('Erreur de chargement') }
   }
 
   useEffect(() => { if (auth) load() }, [auth])
+
+  const doSetTheme = async (name) => {
+    const res = await setTheme(name)
+    if (res.success) {
+      setActiveTheme(name)
+      if (onThemeChange) onThemeChange(name)
+      toast$(`🎨 Thème "${name}" activé`)
+    }
+  }
 
   const login = async () => {
     setLoading(true)
@@ -170,7 +182,7 @@ export default function AdminPage({ onBack }) {
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 6, padding: '12px 16px 0', flexWrap: 'wrap' }}>
-        {[['orders','📦 Commandes'],['ips','🚫 IPs bloqués'],['settings','⚙️ Paramètres']].map(([k,l]) => (
+        {[['orders','📦 Commandes'],['ips','🚫 IPs bloqués'],['themes','🎨 Thèmes'],['settings','⚙️ Paramètres']].map(([k,l]) => (
           <button key={k} onClick={() => setTab(k)}
             style={{ padding: '8px 14px', fontSize: 12, cursor: 'pointer',
               background: tab === k ? `linear-gradient(135deg,${T},#0d3d4a)` : 'transparent',
@@ -332,6 +344,125 @@ export default function AdminPage({ onBack }) {
             </div>
           </div>
         )}
+
+        {/* THEMES TAB */}
+        {tab === 'themes' && (() => {
+          const THEME_LIST = [
+            {
+              id: 'original',
+              icon: '🏪',
+              name: 'Originale',
+              desc: 'Catalogue complet — grille de 6 produits',
+              preview: ['Grille produits', '2 colonnes', 'Tous les articles'],
+              color: T,
+            },
+            {
+              id: 'luxe',
+              icon: '🖤',
+              name: 'Luxe',
+              desc: 'Premium & sombre — hero plein écran, or & brun foncé',
+              preview: ['Hero plein écran', 'Fond sombre #1a0e08', 'Accents dorés'],
+              color: '#C9A077',
+            },
+            {
+              id: 'flash',
+              icon: '🔥',
+              name: 'Flash',
+              desc: 'Urgence & promos — compte à rebours, stock limité',
+              preview: ['Compte à rebours', 'Rouge & urgence', 'CTA sticky'],
+              color: '#dc2626',
+            },
+            {
+              id: 'story',
+              icon: '🏺',
+              name: 'Story',
+              desc: 'Artisanat & récit — histoire de Fès, tons chauds',
+              preview: ['Photo artisan', 'Tons terracotta', 'Certificat authenticité'],
+              color: '#8B4513',
+            },
+            {
+              id: 'minimal',
+              icon: '◻️',
+              name: 'Minimal',
+              desc: 'Épuré & moderne — blanc, typographie propre, Zara-style',
+              preview: ['Fond blanc', 'Minimal & aéré', 'Typographie épurée'],
+              color: '#111111',
+            },
+          ]
+
+          return (
+            <div>
+              <div style={{ background: `linear-gradient(135deg,${AB},#0d1e38)`,
+                border: `1px solid ${AB2}`, borderRadius: 14, padding: '18px 16px', marginBottom: 14 }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: 'white', marginBottom: 4 }}>
+                  🎨 Thème actif
+                </div>
+                <div style={{ fontSize: 12, color: '#475569' }}>
+                  Choisissez le design affiché aux visiteurs. Le changement est immédiat.
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {THEME_LIST.map(th => {
+                  const isActive = activeTheme === th.id
+                  return (
+                    <div key={th.id}
+                      style={{ background: `linear-gradient(135deg,${AB},#0d1e38)`,
+                        border: `2px solid ${isActive ? th.color : AB2}`,
+                        borderRadius: 14, padding: '16px',
+                        transition: 'border-color .2s',
+                        display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+
+                      {/* Icon */}
+                      <div style={{ width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                        background: isActive ? th.color + '20' : AB,
+                        border: `1px solid ${isActive ? th.color : AB2}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 22 }}>
+                        {th.icon}
+                      </div>
+
+                      {/* Info */}
+                      <div style={{ flex: 1, minWidth: 160 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{th.name}</span>
+                          {isActive && (
+                            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px',
+                              background: th.color + '30', color: th.color,
+                              border: `1px solid ${th.color}`, borderRadius: 50 }}>
+                              ACTIF
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: 12, color: '#475569', marginBottom: 8 }}>{th.desc}</div>
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {th.preview.map(p => (
+                            <span key={p} style={{ fontSize: 10, padding: '2px 8px',
+                              background: AB, border: `1px solid ${AB2}`,
+                              borderRadius: 6, color: '#64748b' }}>
+                              {p}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action */}
+                      {isActive
+                        ? <div style={{ fontSize: 12, color: th.color, fontWeight: 700, flexShrink: 0 }}>✓ En ligne</div>
+                        : <button onClick={() => doSetTheme(th.id)}
+                            style={{ padding: '8px 16px', background: T, color: 'white',
+                              border: 'none', borderRadius: 10, fontSize: 12, cursor: 'pointer',
+                              fontFamily: 'Inter,sans-serif', fontWeight: 700, flexShrink: 0 }}>
+                            Activer
+                          </button>
+                      }
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })()}
 
         {/* SETTINGS TAB */}
         {tab === 'settings' && (
