@@ -388,6 +388,14 @@ export default function AdminPage({ onBack, onThemeChange }) {
               preview: ['Fond blanc', 'Minimal & aéré', 'Typographie épurée'],
               color: '#111111',
             },
+            {
+              id: 'arabic',
+              icon: '🕌',
+              name: 'عربي',
+              desc: 'كاتالوغ عربي كامل — hero grid، scroller، شبكة منتجات',
+              preview: ['RTL كامل', 'Hero 4 مداخل', 'كاتالوغ بالعربية'],
+              color: '#A0714F',
+            },
           ]
 
           return (

@@ -7,6 +7,7 @@ import ThemeLuxe   from './themes/ThemeLuxe.jsx'
 import ThemeFlash  from './themes/ThemeFlash.jsx'
 import ThemeStory  from './themes/ThemeStory.jsx'
 import ThemeMinimal from './themes/ThemeMinimal.jsx'
+import ThemeArabic  from './themes/ThemeArabic.jsx'
 
 // ── SIMPLE ROUTER ─────────────────────────────────────────────
 const getPage = () => {
@@ -18,7 +19,7 @@ const getPage = () => {
 
 const getSlug = () => window.location.hash.replace('#produit/', '')
 
-const THEMES = { luxe: ThemeLuxe, flash: ThemeFlash, story: ThemeStory, minimal: ThemeMinimal }
+const THEMES = { luxe: ThemeLuxe, flash: ThemeFlash, story: ThemeStory, minimal: ThemeMinimal, arabic: ThemeArabic }
 
 export default function App() {
   const [page,  setPage]  = useState(getPage())
