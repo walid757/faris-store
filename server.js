@@ -86,7 +86,7 @@ const writeJSON = (file, data) => {
 if (!fs.existsSync(FILES.orders))  writeJSON(FILES.orders,  [])
 if (!fs.existsSync(FILES.blocked)) writeJSON(FILES.blocked, [])
 if (!fs.existsSync(FILES.stats))   writeJSON(FILES.stats,   { visits: 0, orders: 0 })
-if (!fs.existsSync(FILES.theme))   writeJSON(FILES.theme,   { active: 'original', productPage: 'original' })
+if (!fs.existsSync(FILES.theme))   writeJSON(FILES.theme,   { active: 'original' })
 
 // ── MIDDLEWARE ───────────────────────────────────────────────
 app.set('trust proxy', 1)
@@ -123,8 +123,8 @@ app.get('/api/ping', (req, res) => res.json({ status: 'ok', version: '1.0.0' }))
 
 // Public config (whatsapp number + active theme for frontend)
 app.get('/api/config', (req, res) => {
-  const theme = readJSON(FILES.theme, { active: 'original', productPage: 'original' })
-  res.json({ whatsapp: WHATSAPP_NUMBER, theme: theme.active, productPage: theme.productPage || 'original' })
+  const theme = readJSON(FILES.theme, { active: 'original' })
+  res.json({ whatsapp: WHATSAPP_NUMBER, theme: theme.active })
 })
 
 
@@ -271,19 +271,12 @@ app.get('/api/admin/theme', adminAuth, (req, res) => {
   res.json(readJSON(FILES.theme, { active: 'original' }))
 })
 app.post('/api/admin/theme', adminAuth, (req, res) => {
-  const { active, productPage } = req.body
-  const allowed   = ['original', 'luxe', 'flash', 'story', 'minimal', 'arabic']
-  const ppAllowed = ['original', 'arabic', 'video']
-  const current   = readJSON(FILES.theme, { active: 'original', productPage: 'original' })
-  if (active      && !allowed.includes(active))   return res.status(400).json({ error: 'Thème invalide' })
-  if (productPage && !ppAllowed.includes(productPage)) return res.status(400).json({ error: 'Page produit invalide' })
-  const updated = {
-    active:      active      || current.active,
-    productPage: productPage || current.productPage || 'original'
-  }
-  writeJSON(FILES.theme, updated)
-  console.log(`[THEME] theme=${updated.active}, productPage=${updated.productPage}`)
-  res.json({ success: true, ...updated })
+  const { active } = req.body
+  const allowed = ['original', 'luxe', 'flash', 'story']
+  if (!allowed.includes(active)) return res.status(400).json({ error: 'Thème invalide' })
+  writeJSON(FILES.theme, { active })
+  console.log(`[THEME] Active theme changed to: ${active}`)
+  res.json({ success: true, active })
 })
 
 // Get stats

@@ -6,10 +6,6 @@ import FontLoader  from './components/FontLoader.jsx'
 import ThemeLuxe   from './themes/ThemeLuxe.jsx'
 import ThemeFlash  from './themes/ThemeFlash.jsx'
 import ThemeStory  from './themes/ThemeStory.jsx'
-import ThemeMinimal      from './themes/ThemeMinimal.jsx'
-import ThemeArabic       from './themes/ThemeArabic.jsx'
-import ProductPageArabic from './themes/ProductPageArabic.jsx'
-import ProductPageVideo  from './themes/ProductPageVideo.jsx'
 
 // ── SIMPLE ROUTER ─────────────────────────────────────────────
 const getPage = () => {
@@ -21,14 +17,13 @@ const getPage = () => {
 
 const getSlug = () => window.location.hash.replace('#produit/', '')
 
-const THEMES = { luxe: ThemeLuxe, flash: ThemeFlash, story: ThemeStory, minimal: ThemeMinimal, arabic: ThemeArabic }
+const THEMES = { luxe: ThemeLuxe, flash: ThemeFlash, story: ThemeStory }
 
 export default function App() {
   const [page,  setPage]  = useState(getPage())
   const [slug,  setSlug]  = useState(getSlug())
-  const [lang,        setLang]        = useState('fr')
-  const [theme,       setTheme]       = useState('original')
-  const [productPage, setProductPage] = useState('original')
+  const [lang,  setLang]  = useState('fr')
+  const [theme, setTheme] = useState('original')
 
   useEffect(() => {
     const onHash = () => { setPage(getPage()); setSlug(getSlug()) }
@@ -45,10 +40,7 @@ export default function App() {
   useEffect(() => {
     fetch('/api/config')
       .then(r => r.json())
-      .then(cfg => {
-        if (cfg.theme)       setTheme(cfg.theme)
-        if (cfg.productPage) setProductPage(cfg.productPage)
-      })
+      .then(cfg => { if (cfg.theme) setTheme(cfg.theme) })
       .catch(() => {})
   }, [])
 
@@ -65,18 +57,13 @@ export default function App() {
 
   if (page === 'admin') return <><FontLoader/><AdminPage onBack={nav.home} onThemeChange={setTheme} /></>
 
-  if (page === 'product') {
-    const PP_MAP = { arabic: ProductPageArabic, video: ProductPageVideo }
-    const ProductPageComponent = PP_MAP[productPage] || ProductPage
-    return (
-      <ProductPageComponent
-        slug={slug || 'rbati'}
-        {...langProps}
-        onBack={nav.home}
-        onProduct={nav.product}
-      />
-    )
-  }
+  if (page === 'product') return (
+    <ProductPage
+      slug={slug || 'rbati'}
+      {...langProps}
+      onBack={nav.home}
+    />
+  )
 
   // Home — render selected theme or original catalog
   const ThemeComponent = THEMES[theme]

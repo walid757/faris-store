@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import {
   adminLogin, getOrders, updateOrderStatus,
   blockIP, unblockIP, getBlockedIPs, getStats,
-  getTheme, setTheme, setProductPage
+  getTheme, setTheme
 } from '../api/client.js'
 
 const AD = '#070c18'
@@ -22,7 +22,6 @@ export default function AdminPage({ onBack, onThemeChange }) {
   const [toast,       setToast]       = useState('')
   const [loading,     setLoading]     = useState(false)
   const [activeTheme, setActiveTheme] = useState('original')
-  const [activePP,    setActivePP]    = useState('original')
 
   const toast$ = (msg, dur = 2500) => { setToast(msg); setTimeout(() => setToast(''), dur) }
 
@@ -33,8 +32,7 @@ export default function AdminPage({ onBack, onThemeChange }) {
       if (Array.isArray(o)) setOrders(o)
       if (Array.isArray(b)) setBlocked(b)
       if (s.total !== undefined) setStats(s)
-      if (th.active)      setActiveTheme(th.active)
-      if (th.productPage) setActivePP(th.productPage)
+      if (th.active) setActiveTheme(th.active)
     } catch { toast$('Erreur de chargement') }
   }
 
@@ -46,14 +44,6 @@ export default function AdminPage({ onBack, onThemeChange }) {
       setActiveTheme(name)
       if (onThemeChange) onThemeChange(name)
       toast$(`🎨 Thème "${name}" activé`)
-    }
-  }
-
-  const doSetPP = async (name) => {
-    const res = await setProductPage(name)
-    if (res.success) {
-      setActivePP(name)
-      toast$(`📄 Page produit "${name}" activée`)
     }
   }
 
@@ -390,22 +380,6 @@ export default function AdminPage({ onBack, onThemeChange }) {
               preview: ['Photo artisan', 'Tons terracotta', 'Certificat authenticité'],
               color: '#8B4513',
             },
-            {
-              id: 'minimal',
-              icon: '◻️',
-              name: 'Minimal',
-              desc: 'Épuré & moderne — blanc, typographie propre, Zara-style',
-              preview: ['Fond blanc', 'Minimal & aéré', 'Typographie épurée'],
-              color: '#111111',
-            },
-            {
-              id: 'arabic',
-              icon: '🕌',
-              name: 'عربي',
-              desc: 'كاتالوغ عربي كامل — hero grid، scroller، شبكة منتجات',
-              preview: ['RTL كامل', 'Hero 4 مداخل', 'كاتالوغ بالعربية'],
-              color: '#A0714F',
-            },
           ]
 
           return (
@@ -479,54 +453,6 @@ export default function AdminPage({ onBack, onThemeChange }) {
                 })}
               </div>
 
-              {/* ── Product Page Section ── */}
-              <div style={{ marginTop: 24, background: `linear-gradient(135deg,${AB},#0d1e38)`,
-                border: `1px solid ${AB2}`, borderRadius: 14, padding: '18px 16px', marginBottom: 10 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'white', marginBottom: 4 }}>
-                  📄 نموذج صفحة المنتج
-                </div>
-                <div style={{ fontSize: 12, color: '#475569', marginBottom: 16 }}>
-                  اختر تصميم الصفحة التي تظهر عند الضغط على منتج.
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {[
-                    { id: 'original', icon: '📋', name: 'الأصلي', desc: 'نموذج الطلب الكلاسيكي', color: '#3b82f6' },
-                    { id: 'arabic',   icon: '🕌', name: 'عربي — سلّة', desc: 'تصميم نظيف، tabs، FAQ accordion، عربي RTL', color: '#A0714F' },
-                    { id: 'video',    icon: '🎬', name: 'بريميوم + فيديو', desc: 'صفحة قصة مع فيديو صنع الجلد في فاس، تقييمات', color: '#C9A077' },
-                  ].map(pp => {
-                    const on = activePP === pp.id
-                    return (
-                      <div key={pp.id} style={{ display: 'flex', alignItems: 'center', gap: 12,
-                        background: AD, border: `2px solid ${on ? pp.color : AB2}`,
-                        borderRadius: 12, padding: '12px 14px', transition: 'border-color .2s' }}>
-                        <div style={{ fontSize: 20, width: 36, height: 36, borderRadius: 8,
-                          background: on ? pp.color + '20' : AB2,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          {pp.icon}
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                            <span style={{ fontSize: 13, fontWeight: 700, color: 'white' }}>{pp.name}</span>
-                            {on && <span style={{ fontSize: 10, padding: '1px 7px',
-                              background: pp.color + '25', color: pp.color, border: `1px solid ${pp.color}`,
-                              borderRadius: 50, fontWeight: 700 }}>ACTIF</span>}
-                          </div>
-                          <div style={{ fontSize: 11, color: '#475569' }}>{pp.desc}</div>
-                        </div>
-                        {on
-                          ? <div style={{ fontSize: 12, color: pp.color, fontWeight: 700, flexShrink: 0 }}>✓</div>
-                          : <button onClick={() => doSetPP(pp.id)}
-                              style={{ padding: '6px 14px', background: T, color: 'white',
-                                border: 'none', borderRadius: 8, fontSize: 11, cursor: 'pointer',
-                                fontFamily: 'Inter,sans-serif', fontWeight: 700, flexShrink: 0 }}>
-                              Activer
-                            </button>
-                        }
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
             </div>
           )
         })()}
