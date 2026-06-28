@@ -235,6 +235,11 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
   // ── PRODUCT PAGE ──────────────────────────────────────────────
   return (
     <div style={{ ...AF, background: 'white', color: C.DK, maxWidth: 780, margin: '0 auto', overflowX: 'hidden' }}>
+      <style>{`
+        @keyframes pp-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+        @keyframes pp-old{0%,100%{opacity:.55}50%{opacity:.9}}
+        @keyframes pp-badge{0%,100%{box-shadow:0 0 0 0 rgba(196,96,42,.35)}70%{box-shadow:0 0 0 7px rgba(196,96,42,0)}}
+      `}</style>
       <Toast msg={toast} />
       <Marquee lang={lang} />
       <Header lang={lang} onHome={onBack} onLogoClick={handleLogo} onLangToggle={onLangToggle} />
@@ -319,18 +324,21 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
-          <span style={{ fontFamily: 'Georgia,serif', fontSize: 32, fontWeight: 700, color: C.DK, lineHeight: 1 }}>
+          <span style={{ fontFamily: 'Georgia,serif', fontSize: 32, fontWeight: 700, color: C.DK, lineHeight: 1,
+            display: 'inline-block', animation: 'pp-pulse 2.5s ease-in-out infinite' }}>
             {prod.prix} <span style={{ fontSize: 18, fontWeight: 400 }}>{tr.currency}</span>
           </span>
           {prod.old && (
-            <span style={{ fontSize: 18, color: '#bbb', textDecoration: 'line-through', fontFamily: 'Inter,sans-serif' }}>
+            <span style={{ fontSize: 18, color: '#bbb', textDecoration: 'line-through', fontFamily: 'Inter,sans-serif',
+              display: 'inline-block', animation: 'pp-old 2.5s ease-in-out infinite' }}>
               {prod.old} {tr.currency}
             </span>
           )}
           {prod.old && (
             <span style={{ background: '#FFF0E8', color: '#C4602A', fontSize: 12, fontWeight: 700,
               padding: '3px 12px', borderRadius: 20, border: '1px solid #F5C9AE',
-              fontFamily: 'Inter,sans-serif' }}>
+              fontFamily: 'Inter,sans-serif', display: 'inline-block',
+              animation: 'pp-badge 2s ease-in-out infinite' }}>
               {lang === 'fr' ? 'ÉCONOMISEZ' : 'وفّر'} {prod.old - prod.prix} {tr.currency}
             </span>
           )}
