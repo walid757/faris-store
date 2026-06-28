@@ -240,7 +240,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         @keyframes pp-old{0%,100%{opacity:.55}50%{opacity:.9}}
         @keyframes pp-badge{0%,100%{box-shadow:0 0 0 0 rgba(196,96,42,.35)}70%{box-shadow:0 0 0 7px rgba(196,96,42,0)}}
         @keyframes pp-shake{0%,78%,100%{transform:translateX(0)}80%{transform:translateX(-6px)}83%{transform:translateX(6px)}86%{transform:translateX(-5px)}89%{transform:translateX(5px)}92%{transform:translateX(-2px)}95%{transform:translateX(2px)}}
-        @keyframes pp-strike{0%{width:0}100%{width:100%}}
+        @keyframes pp-strike{0%{width:0;opacity:1}55%{width:100%;opacity:1}75%{width:100%;opacity:0}100%{width:0;opacity:0}}
       `}</style>
       <Toast msg={toast} />
       <Marquee lang={lang} />
@@ -335,9 +335,9 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
               display: 'inline-block', animation: 'pp-old 2.5s ease-in-out infinite',
               position: 'relative' }}>
               {prod.old} {tr.currency}
-              <span style={{ position: 'absolute', left: 0, top: '52%', height: 3,
-                background: '#e05050', borderRadius: 2, display: 'block',
-                animation: 'pp-strike .9s ease-out forwards' }} />
+              <span style={{ position: 'absolute', right: 0, top: '52%', height: 1.5,
+                background: 'rgba(200,60,60,0.55)', borderRadius: 2, display: 'block',
+                animation: 'pp-strike 3s ease-in-out infinite' }} />
             </span>
           )}
           {prod.old && (
