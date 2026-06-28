@@ -301,14 +301,9 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
 
       {/* PRODUCT INFO */}
       <div style={{ padding: '16px 14px 0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+        <div style={{ marginBottom: 3 }}>
           <div style={{ fontSize: 10, letterSpacing: 2, color: '#aaa', fontFamily: 'Inter,sans-serif',
             fontWeight: 700 }}>{prod.cat[lang] || prod.cat.fr}</div>
-          <div style={{ fontFamily: 'Inter,sans-serif', fontWeight: 700, fontSize: 16 }}>
-            {prod.old && <span style={{ fontSize: 12, color: '#bbb', textDecoration: 'line-through',
-              marginRight: 6 }}>{prod.old}</span>}
-            <span style={{ color: C.T }}>{prod.prix} {tr.currency}</span>
-          </div>
         </div>
         <h1 style={{ fontFamily: 'Georgia,serif', fontStyle: 'italic', fontWeight: 600,
           fontSize: 32, color: C.DK, lineHeight: 1, marginBottom: 5 }}>
@@ -317,11 +312,28 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         <div style={{ fontSize: 12, color: '#888', ...AF, marginBottom: 8 }}>
           {prod.sub[lang] || prod.sub.fr}
         </div>
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 16 }}>
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 12 }}>
           <Stars n={5} />
           <span style={{ fontSize: 11, fontFamily: 'Inter,sans-serif', color: '#aaa', marginLeft: 5 }}>
             147 {tr.ratingLabel}
           </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
+          <span style={{ fontFamily: 'Georgia,serif', fontSize: 32, fontWeight: 700, color: C.DK, lineHeight: 1 }}>
+            {prod.prix} <span style={{ fontSize: 18, fontWeight: 400 }}>{tr.currency}</span>
+          </span>
+          {prod.old && (
+            <span style={{ fontSize: 18, color: '#bbb', textDecoration: 'line-through', fontFamily: 'Inter,sans-serif' }}>
+              {prod.old} {tr.currency}
+            </span>
+          )}
+          {prod.old && (
+            <span style={{ background: '#FFF0E8', color: '#C4602A', fontSize: 12, fontWeight: 700,
+              padding: '3px 12px', borderRadius: 20, border: '1px solid #F5C9AE',
+              fontFamily: 'Inter,sans-serif' }}>
+              {lang === 'fr' ? 'ÉCONOMISEZ' : 'وفّر'} {prod.old - prod.prix} {tr.currency}
+            </span>
+          )}
         </div>
 
         {/* Story */}
@@ -437,8 +449,8 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         {/* HOOK 02 */}
         {prod.lifestyle.length >= 1 && (
           <div style={{ margin: '0 -14px' }}>
-            <img src={prod.lifestyle[0]} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '16/9',
-              objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+            <img src="https://images.unsplash.com/photo-1504200150580-c3b87a9e2f9d?w=900&q=80" alt="" loading="lazy" style={{ width: '100%', aspectRatio: '16/9',
+              objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
             <div style={{ background: '#3D2310', padding: '24px 18px 26px' }}>
               <div style={{ fontSize: 9, letterSpacing: 4, color: C.GD, fontFamily: 'Inter,sans-serif',
                 fontWeight: 700, marginBottom: 10 }}>
