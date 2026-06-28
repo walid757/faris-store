@@ -449,8 +449,8 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         {/* HOOK 02 */}
         {prod.lifestyle.length >= 1 && (
           <div style={{ margin: '0 -14px' }}>
-            <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?w=900&q=80" alt="" loading="lazy" style={{ width: '100%', aspectRatio: '16/9',
-              objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+            <img src={prod.lifestyle[0]} alt="" loading="lazy" style={{ width: '100%', aspectRatio: '16/9',
+              objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
             <div style={{ background: '#3D2310', padding: '24px 18px 26px' }}>
               <div style={{ fontSize: 9, letterSpacing: 4, color: C.GD, fontFamily: 'Inter,sans-serif',
                 fontWeight: 700, marginBottom: 10 }}>
