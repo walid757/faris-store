@@ -17,6 +17,32 @@ export const COULEURS = {
 // ── CATALOGUE ──────────────────────────────────────────────────
 export const PRODUCTS = [
   {
+    id:     7,
+    slug:   'stephano',
+    cat:    { fr: 'BOTTINE CUIR', ar: 'بوتين جلدي' },
+    nom:    { fr: 'Stéphano',    ar: 'ستيفانو' },
+    sub:    { fr: 'Cuir naturel · Semelle gomme · Chelsea Brogue',
+              ar: 'جلد طبيعي · نعل مطاط · تشيلسي بروغ' },
+    story:  {
+      fr: "La bottine Stéphano allie le style Chelsea brogue à une semelle gomme généreuse. Cuir naturel tanné à la main, disponible en trois coloris intemporels.",
+      ar: "بوتين ستيفانو يجمع بين أسلوب تشيلسي بروغ ونعل مطاطي مريح. جلد طبيعي مدبوغ يدوياً، متوفر في ثلاثة ألوان كلاسيكية."
+    },
+    prix:   320,
+    old:    490,
+    imgs: [
+      '/products/stephano/1.png',
+      '/products/stephano/2.png',
+      '/products/stephano/3.png',
+      '/products/stephano/4.png',
+      '/products/stephano/5.png',
+    ],
+    lifestyle: [],
+    couleurs: ['Noir', 'Marron', 'Gris ardoise'],
+    tailles:  [39, 40, 41, 42, 43, 44],
+    featured: true,
+    badge:    { fr: 'Promo -35%', ar: 'تخفيض 35٪' }
+  },
+  {
     id:     1,
     slug:   'rbati',
     cat:    { fr: 'CHELSEA BROGUE', ar: 'تشيلسي بروغ' },
