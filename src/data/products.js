@@ -3,7 +3,7 @@ export const COULEURS = {
   'Noir':           '#111111',
   'Cognac':         '#8B4513',
   'Gris ardoise':   '#5a5a6a',
-  'Marron':         '#3b1d0e',
+  'Marron':         '#8B5E3C',
   'Bordeaux':       '#6b1e2a',
   'Camel':          '#c19a6b',
   'Kaki':           '#6b6b3a',
