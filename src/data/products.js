@@ -32,11 +32,12 @@ export const PRODUCTS = [
     imgs: [
       '/products/stephano/1.png',
       '/products/stephano/2.png',
+    ],
+    lifestyle: [
       '/products/stephano/3.png',
       '/products/stephano/4.png',
       '/products/stephano/5.png',
     ],
-    lifestyle: [],
     couleurs: ['Noir', 'Marron', 'Gris ardoise'],
     tailles:  [39, 40, 41, 42, 43, 44],
     featured: true,
