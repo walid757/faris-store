@@ -239,6 +239,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         @keyframes pp-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
         @keyframes pp-old{0%,100%{opacity:.55}50%{opacity:.9}}
         @keyframes pp-badge{0%,100%{box-shadow:0 0 0 0 rgba(196,96,42,.35)}70%{box-shadow:0 0 0 7px rgba(196,96,42,0)}}
+        @keyframes pp-shake{0%,78%,100%{transform:translateX(0)}80%{transform:translateX(-6px)}83%{transform:translateX(6px)}86%{transform:translateX(-5px)}89%{transform:translateX(5px)}92%{transform:translateX(-2px)}95%{transform:translateX(2px)}}
       `}</style>
       <Toast msg={toast} />
       <Marquee lang={lang} />
@@ -401,7 +402,8 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
           style={{ width: '100%', padding: '14px', background: loading ? '#94a3b8' : C.T,
             color: 'white', fontSize: 13, ...AF, fontWeight: 700, border: 'none',
             cursor: loading ? 'not-allowed' : 'pointer', marginBottom: 8,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+            animation: loading ? 'none' : 'pp-shake 4s ease-in-out infinite' }}>
           <span>{loading ? '...' : tr.orderBtn}</span>
           <span style={{ background: 'rgba(255,255,255,.2)', borderRadius: 4,
             padding: '3px 10px', fontSize: 14, fontWeight: 900 }}>
