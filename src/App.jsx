@@ -6,6 +6,7 @@ import FontLoader  from './components/FontLoader.jsx'
 import ThemeLuxe   from './themes/ThemeLuxe.jsx'
 import ThemeFlash  from './themes/ThemeFlash.jsx'
 import ThemeStory  from './themes/ThemeStory.jsx'
+import ThemeFassi  from './themes/ThemeFassi.jsx'
 
 // ── SIMPLE ROUTER ─────────────────────────────────────────────
 const getPage = () => {
@@ -17,7 +18,7 @@ const getPage = () => {
 
 const getSlug = () => window.location.hash.replace('#produit/', '')
 
-const THEMES = { luxe: ThemeLuxe, flash: ThemeFlash, story: ThemeStory }
+const THEMES = { luxe: ThemeLuxe, flash: ThemeFlash, story: ThemeStory, fassi: ThemeFassi }
 
 export default function App() {
   const [page,  setPage]  = useState(getPage())

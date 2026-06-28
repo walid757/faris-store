@@ -272,7 +272,7 @@ app.get('/api/admin/theme', adminAuth, (req, res) => {
 })
 app.post('/api/admin/theme', adminAuth, (req, res) => {
   const { active } = req.body
-  const allowed = ['original', 'luxe', 'flash', 'story']
+  const allowed = ['original', 'luxe', 'flash', 'story', 'fassi']
   if (!allowed.includes(active)) return res.status(400).json({ error: 'Thème invalide' })
   writeJSON(FILES.theme, { active })
   console.log(`[THEME] Active theme changed to: ${active}`)

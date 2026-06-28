@@ -380,6 +380,14 @@ export default function AdminPage({ onBack, onThemeChange }) {
               preview: ['Photo artisan', 'Tons terracotta', 'Certificat authenticité'],
               color: '#8B4513',
             },
+            {
+              id: 'fassi',
+              icon: '👞',
+              name: 'Fassi Premium',
+              desc: 'Stéphano — page produit complète, sable & cuir, accordéons',
+              preview: ['Photos réelles', 'Avis clients', 'Formulaire intégré'],
+              color: '#8B5E3C',
+            },
           ]
 
           return (
