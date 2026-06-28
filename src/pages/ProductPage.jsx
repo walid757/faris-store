@@ -397,7 +397,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
           <div style={{ padding: '24px 18px 18px', textAlign: 'center' }}>
             <div style={{ fontSize: 9, letterSpacing: 4, color: C.GD, fontFamily: 'Inter,sans-serif',
               fontWeight: 700, marginBottom: 6 }}>
-              {lang === 'fr' ? 'HOOK #01' : 'الميزة الأولى'}
+              {lang === 'fr' ? '#01' : 'الميزة الأولى'}
             </div>
             <h2 style={{ ...AF, fontWeight: 900, fontSize: 24, color: 'white',
               lineHeight: 1.25, marginBottom: 10 }}>{tr.h1title}</h2>
@@ -442,7 +442,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
             <div style={{ background: '#3D2310', padding: '24px 18px 26px' }}>
               <div style={{ fontSize: 9, letterSpacing: 4, color: C.GD, fontFamily: 'Inter,sans-serif',
                 fontWeight: 700, marginBottom: 10 }}>
-                {lang === 'fr' ? 'HOOK #02 · SAVOIR-FAIRE' : 'الميزة الثانية · الحرفية'}
+                {lang === 'fr' ? '#02 · SAVOIR-FAIRE' : 'الحرفية'}
               </div>
               <h2 style={{ ...AF, fontWeight: 900, fontSize: 26, color: 'white',
                 lineHeight: 1.3, marginBottom: 10 }}>{tr.h2quote}</h2>
@@ -470,7 +470,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
           <div style={{ padding: '22px 16px 14px', textAlign: 'center' }}>
             <div style={{ fontSize: 9, letterSpacing: 4, color: C.T, fontFamily: 'Inter,sans-serif',
               fontWeight: 700, marginBottom: 6 }}>
-              {lang === 'fr' ? 'HOOK #03 · LE CUIR' : 'الميزة الثالثة · الجلد'}
+              {lang === 'fr' ? '#03 · LE CUIR' : 'الجلد'}
             </div>
             <h2 style={{ ...AF, fontWeight: 900, fontSize: 20, color: C.DK, lineHeight: 1.3 }}>
               {tr.h3title}
