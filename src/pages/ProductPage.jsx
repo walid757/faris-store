@@ -420,6 +420,48 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
           {tr.guarantee}
         </div>
 
+        {/* HOOK 01 */}
+        <div style={{ margin: '0 -14px', background: '#2C1A0E' }}>
+          <div style={{ padding: '24px 18px 18px', textAlign: 'center' }}>
+            <div style={{ fontSize: 9, letterSpacing: 4, color: C.GD, fontFamily: 'Inter,sans-serif',
+              fontWeight: 700, marginBottom: 6 }}>
+              {lang === 'fr' ? '#01' : 'الميزة الأولى'}
+            </div>
+            <h2 style={{ ...AF, fontWeight: 900, fontSize: 24, color: 'white',
+              lineHeight: 1.25, marginBottom: 10 }}>{tr.h1title}</h2>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,.55)', ...AF, lineHeight: 1.8,
+              maxWidth: 280, margin: '0 auto' }}>{tr.h1sub}</p>
+          </div>
+          {prod.lifestyle.length >= 2 && (
+            <div>
+              {prod.lifestyle.slice(0, 2).map((src, i) => (
+                <div key={i} style={{ marginTop: i > 0 ? 2 : 0 }}>
+                  <img src={src} alt="" loading="lazy" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                  <div style={{ background: '#3D2310', padding: '10px 14px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 9, letterSpacing: 3, color: C.GD,
+                      fontFamily: 'Inter,sans-serif', fontWeight: 700 }}>
+                      {i === 0 ? (lang === 'fr' ? 'NATURE' : 'الطبيعة') : (lang === 'fr' ? 'URBAN' : 'المدينة')}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {/* Materials */}
+          <div style={{ display: 'flex', justifyContent: 'space-around',
+            padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,.07)' }}>
+            {(lang === 'fr'
+              ? [['Vibram','Semelle'],['Cuir naturel','Tige'],['Cuir bœuf','Doublure']]
+              : [['فيبرام','النعل'],['جلد طبيعي','السطح'],['جلد بقري','البطانة']]
+            ).map(([v, l]) => (
+              <div key={l} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'white', fontFamily: tr.font }}>{v}</div>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,.38)', fontFamily: tr.font, marginTop: 2 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* COLOR SLIDERS */}
         {prod.colorSliders && prod.colorSliders.map((cs, ci) => {
           const si = colorSlides[ci] || 0
