@@ -474,17 +474,6 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
                   </div>
                 </div>
               </div>
-              <div style={{ display: 'flex', background: '#0d0d0d', padding: '3px', gap: 2 }}>
-                {cs.slides.map((sl, sIdx) => (
-                  <div key={sIdx} onClick={() => setColorSlides(prev => ({...prev, [ci]: sIdx}))}
-                    style={{ flex: 1, aspectRatio: '1/1', overflow: 'hidden', cursor: 'pointer',
-                      border: `2px solid ${sIdx === si ? cs.hex : 'transparent'}`, transition: 'border .15s' }}>
-                    <img src={sl.img} alt="" loading="lazy"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                        filter: sIdx === si ? 'none' : 'brightness(.55)' }} />
-                  </div>
-                ))}
-              </div>
             </div>
           )
         })}
