@@ -457,9 +457,9 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
                     scrollbarWidth: 'none', paddingRight: 0 }}
                 >
                   {cs.slides.map((sl, sIdx) => (
-                    <div key={sIdx} style={{ flex: '0 0 85%', scrollSnapAlign: 'start', aspectRatio: '4/3' }}>
+                    <div key={sIdx} style={{ flex: '0 0 92%', scrollSnapAlign: 'start', aspectRatio: '1/1', background: '#0a0a0a' }}>
                       <img src={sl.img} alt="" loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
                     </div>
                   ))}
                 </div>
