@@ -21,6 +21,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
   const [logoN,   setLogoN]   = useState(0)
   const [popup,   setPopup]   = useState(false)
   const [colorSlides, setColorSlides] = useState({})
+  const colorSliderRefs = useRef({})
   const logoTimer              = useRef(null)
   const inactiveTimer          = useRef(null)
   const popupShown             = useRef(false)
@@ -242,6 +243,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         @keyframes pp-badge{0%,100%{box-shadow:0 0 0 0 rgba(196,96,42,.35)}70%{box-shadow:0 0 0 7px rgba(196,96,42,0)}}
         @keyframes pp-shake{0%,78%,100%{transform:translateX(0)}80%{transform:translateX(-6px)}83%{transform:translateX(6px)}86%{transform:translateX(-5px)}89%{transform:translateX(5px)}92%{transform:translateX(-2px)}95%{transform:translateX(2px)}}
         @keyframes pp-strike{0%{width:0;opacity:1}55%{width:100%;opacity:1}75%{width:100%;opacity:0}100%{width:0;opacity:0}}
+        .cs-scroll::-webkit-scrollbar{display:none}
       `}</style>
       <Toast msg={toast} />
       <Marquee lang={lang} />
@@ -423,6 +425,11 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
         {/* COLOR SLIDERS */}
         {prod.colorSliders && prod.colorSliders.map((cs, ci) => {
           const si = colorSlides[ci] || 0
+          const scrollTo = (idx) => {
+            const el = colorSliderRefs.current[ci]
+            if (el) el.scrollTo({ left: idx * (el.clientWidth * 0.85 + 8), behavior: 'smooth' })
+            setColorSlides(prev => ({...prev, [ci]: idx}))
+          }
           return (
             <div key={ci} style={{ margin: '0 -14px', marginTop: 2 }}>
               <div style={{ background: ci === 0 ? '#3D3D4A' : ci === 1 ? '#5C3A1E' : '#1A1A1A',
@@ -436,42 +443,55 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
                   </div>
                 </div>
               </div>
-              <div style={{ position: 'relative', background: '#111', overflow: 'hidden' }}>
-                <div style={{ aspectRatio: '16/9', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', background: '#111' }}>
+                <div
+                  ref={el => { colorSliderRefs.current[ci] = el }}
+                  className="cs-scroll"
+                  onScroll={e => {
+                    const el = e.currentTarget
+                    const newSi = Math.round(el.scrollLeft / (el.clientWidth * 0.85 + 8))
+                    if (newSi !== si) setColorSlides(prev => ({...prev, [ci]: newSi}))
+                  }}
+                  style={{ display: 'flex', gap: 8, overflowX: 'scroll',
+                    scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
+                    scrollbarWidth: 'none', paddingRight: 0 }}
+                >
                   {cs.slides.map((sl, sIdx) => (
-                    <div key={sIdx} style={{ position: 'absolute', inset: 0,
-                      opacity: sIdx === si ? 1 : 0, transition: 'opacity .5s ease',
-                      pointerEvents: sIdx === si ? 'auto' : 'none' }}>
+                    <div key={sIdx} style={{ flex: '0 0 85%', scrollSnapAlign: 'start', aspectRatio: '4/3' }}>
                       <img src={sl.img} alt="" loading="lazy"
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </div>
                   ))}
-                  <button onClick={() => setColorSlides(prev => ({...prev, [ci]: (si - 1 + cs.slides.length) % cs.slides.length}))}
+                </div>
+                {si > 0 && (
+                  <button onClick={() => scrollTo(si - 1)}
                     style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)',
                       background: 'rgba(0,0,0,.55)', border: 'none', color: 'white', width: 34, height: 34,
-                      borderRadius: '50%', cursor: 'pointer', fontSize: 20, lineHeight: 1,
+                      borderRadius: '50%', cursor: 'pointer', fontSize: 20, lineHeight: 1, zIndex: 2,
                       display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
-                  <button onClick={() => setColorSlides(prev => ({...prev, [ci]: (si + 1) % cs.slides.length}))}
+                )}
+                {si < cs.slides.length - 1 && (
+                  <button onClick={() => scrollTo(si + 1)}
                     style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
                       background: 'rgba(0,0,0,.55)', border: 'none', color: 'white', width: 34, height: 34,
-                      borderRadius: '50%', cursor: 'pointer', fontSize: 20, lineHeight: 1,
+                      borderRadius: '50%', cursor: 'pointer', fontSize: 20, lineHeight: 1, zIndex: 2,
                       display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
-                  <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0,
-                    display: 'flex', justifyContent: 'center', gap: 4 }}>
-                    {cs.slides.map((_, dotIdx) => (
-                      <div key={dotIdx} onClick={() => setColorSlides(prev => ({...prev, [ci]: dotIdx}))}
-                        style={{ width: dotIdx === si ? 18 : 5, height: 5,
-                          background: dotIdx === si ? 'white' : 'rgba(255,255,255,.4)',
-                          borderRadius: 3, cursor: 'pointer', transition: 'all .3s' }} />
-                    ))}
-                  </div>
+                )}
+                <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0,
+                  display: 'flex', justifyContent: 'center', gap: 4, pointerEvents: 'none' }}>
+                  {cs.slides.map((_, dotIdx) => (
+                    <div key={dotIdx}
+                      style={{ width: dotIdx === si ? 18 : 5, height: 5,
+                        background: dotIdx === si ? 'white' : 'rgba(255,255,255,.4)',
+                        borderRadius: 3, transition: 'all .3s' }} />
+                  ))}
                 </div>
-                <div style={{ background: '#111', padding: '10px 16px 12px', textAlign: 'center',
-                  borderTop: '1px solid rgba(255,255,255,.07)' }}>
-                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,.75)',
-                    fontFamily: tr.font, fontStyle: 'italic', lineHeight: 1.5 }}>
-                    {cs.slides[si].caption[lang] || cs.slides[si].caption.fr}
-                  </div>
+              </div>
+              <div style={{ background: '#111', padding: '10px 16px 12px', textAlign: 'center',
+                borderTop: '1px solid rgba(255,255,255,.07)' }}>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,.75)',
+                  fontFamily: tr.font, fontStyle: 'italic', lineHeight: 1.5 }}>
+                  {cs.slides[si].caption[lang] || cs.slides[si].caption.fr}
                 </div>
               </div>
             </div>
