@@ -20,6 +20,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
   const [toast,   setToast]   = useState('')
   const [logoN,   setLogoN]   = useState(0)
   const [popup,   setPopup]   = useState(false)
+  const [colorSlides, setColorSlides] = useState({})
   const logoTimer              = useRef(null)
   const inactiveTimer          = useRef(null)
   const popupShown             = useRef(false)
@@ -460,6 +461,75 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
             ))}
           </div>
         </div>
+
+        {/* COLOR SLIDERS */}
+        {prod.colorSliders && prod.colorSliders.map((cs, ci) => {
+          const si = colorSlides[ci] || 0
+          return (
+            <div key={ci} style={{ margin: '0 -14px', marginTop: 2 }}>
+              <div style={{ background: ci === 0 ? '#3D3D4A' : ci === 1 ? '#5C3A1E' : '#1A1A1A',
+                padding: '16px 18px 12px', textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 6 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: cs.hex,
+                    border: '2px solid rgba(255,255,255,.6)', boxShadow: '0 1px 6px rgba(0,0,0,.4)' }} />
+                  <div style={{ fontSize: 10, letterSpacing: 3, color: 'rgba(255,255,255,.85)',
+                    fontFamily: 'Inter,sans-serif', fontWeight: 700 }}>
+                    {cs.couleur.toUpperCase()} · {lang === 'fr' ? 'STYLE GUIDE' : 'دليل الستايل'}
+                  </div>
+                </div>
+              </div>
+              <div style={{ position: 'relative', background: '#111', overflow: 'hidden' }}>
+                <div style={{ aspectRatio: '16/9', position: 'relative', overflow: 'hidden' }}>
+                  {cs.slides.map((sl, sIdx) => (
+                    <div key={sIdx} style={{ position: 'absolute', inset: 0,
+                      opacity: sIdx === si ? 1 : 0, transition: 'opacity .5s ease',
+                      pointerEvents: sIdx === si ? 'auto' : 'none' }}>
+                      <img src={sl.img} alt="" loading="lazy"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    </div>
+                  ))}
+                  <button onClick={() => setColorSlides(prev => ({...prev, [ci]: (si - 1 + cs.slides.length) % cs.slides.length}))}
+                    style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)',
+                      background: 'rgba(0,0,0,.55)', border: 'none', color: 'white', width: 34, height: 34,
+                      borderRadius: '50%', cursor: 'pointer', fontSize: 20, lineHeight: 1,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+                  <button onClick={() => setColorSlides(prev => ({...prev, [ci]: (si + 1) % cs.slides.length}))}
+                    style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+                      background: 'rgba(0,0,0,.55)', border: 'none', color: 'white', width: 34, height: 34,
+                      borderRadius: '50%', cursor: 'pointer', fontSize: 20, lineHeight: 1,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+                  <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0,
+                    display: 'flex', justifyContent: 'center', gap: 4 }}>
+                    {cs.slides.map((_, dotIdx) => (
+                      <div key={dotIdx} onClick={() => setColorSlides(prev => ({...prev, [ci]: dotIdx}))}
+                        style={{ width: dotIdx === si ? 18 : 5, height: 5,
+                          background: dotIdx === si ? 'white' : 'rgba(255,255,255,.4)',
+                          borderRadius: 3, cursor: 'pointer', transition: 'all .3s' }} />
+                    ))}
+                  </div>
+                </div>
+                <div style={{ background: '#111', padding: '10px 16px 12px', textAlign: 'center',
+                  borderTop: '1px solid rgba(255,255,255,.07)' }}>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,.75)',
+                    fontFamily: tr.font, fontStyle: 'italic', lineHeight: 1.5 }}>
+                    {cs.slides[si].caption[lang] || cs.slides[si].caption.fr}
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', background: '#0d0d0d', padding: '3px', gap: 2 }}>
+                {cs.slides.map((sl, sIdx) => (
+                  <div key={sIdx} onClick={() => setColorSlides(prev => ({...prev, [ci]: sIdx}))}
+                    style={{ flex: 1, aspectRatio: '1/1', overflow: 'hidden', cursor: 'pointer',
+                      border: `2px solid ${sIdx === si ? cs.hex : 'transparent'}`, transition: 'border .15s' }}>
+                    <img src={sl.img} alt="" loading="lazy"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                        filter: sIdx === si ? 'none' : 'brightness(.55)' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
 
         {/* HOOK 02 */}
         {prod.lifestyle.length >= 1 && (

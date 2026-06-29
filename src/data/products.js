@@ -41,7 +41,45 @@ export const PRODUCTS = [
     couleurs: ['Noir', 'Marron', 'Gris ardoise'],
     tailles:  [39, 40, 41, 42, 43, 44],
     featured: true,
-    badge:    { fr: 'Promo -35%', ar: 'تخفيض 35٪' }
+    badge:    { fr: 'Promo -35%', ar: 'تخفيض 35٪' },
+    colorSliders: [
+      {
+        couleur: 'Gris ardoise',
+        hex: '#5a5a6a',
+        slides: [
+          { img: '/products/stephano/gray/1.jpg', caption: { fr: 'Look urbain · Veste en cuir', ar: 'لوك حضري · جاكيت جلدي' } },
+          { img: '/products/stephano/gray/2.jpg', caption: { fr: 'Tenue habillée · Manteau long', ar: 'تنسيق أنيق · معطف طويل' } },
+          { img: '/products/stephano/gray/3.jpg', caption: { fr: 'Style minimaliste · Pavé de ville', ar: 'ستايل مينيمال · بلاط المدينة' } },
+          { img: '/products/stephano/gray/4.jpg', caption: { fr: 'Détail artisan · Cuir brogue', ar: 'تفاصيل حرفية · جلد بروغ' } },
+          { img: '/products/stephano/gray/5.jpg', caption: { fr: 'Casual outdoor · Jean slim', ar: 'لوك كاجوال · جينز سليم' } },
+          { img: '/products/stephano/gray/6.jpg', caption: { fr: 'Street style · Look décontracté', ar: 'ستريت ستايل · مريح وأنيق' } },
+        ]
+      },
+      {
+        couleur: 'Marron',
+        hex: '#8B5E3C',
+        slides: [
+          { img: '/products/stephano/brown/1.jpg', caption: { fr: 'Look sauvage · Veste cuir', ar: 'لوك جريء · جاكيت جلدي' } },
+          { img: '/products/stephano/brown/2.jpg', caption: { fr: 'Style rock · Cognac intense', ar: 'ستايل روك · كونياك داكن' } },
+          { img: '/products/stephano/brown/3.jpg', caption: { fr: 'Soirée en ville · Pavé lumineux', ar: 'سهرة في المدينة · بلاط مضيء' } },
+          { img: '/products/stephano/brown/4.jpg', caption: { fr: 'Look luxe · Boutique premium', ar: 'لوك فاخر · بوتيك راقي' } },
+          { img: '/products/stephano/brown/5.jpg', caption: { fr: 'Cognac naturel · Cuir vivant', ar: 'كونياك طبيعي · جلد حي' } },
+          { img: '/products/stephano/brown/6.jpg', caption: { fr: 'Cuir cognac · Blazer camel', ar: 'جلد كونياك · بلازر كاميل' } },
+        ]
+      },
+      {
+        couleur: 'Noir',
+        hex: '#111111',
+        slides: [
+          { img: '/products/stephano/black/1.jpg', caption: { fr: 'Look premium · Marbre blanc', ar: 'لوك بريميوم · رخام أبيض' } },
+          { img: '/products/stephano/black/2.jpg', caption: { fr: 'Pure élégance · Fond épuré', ar: 'أناقة خالصة · خلفية نظيفة' } },
+          { img: '/products/stephano/black/3.jpg', caption: { fr: 'Tenue formelle · Black total', ar: 'تنسيق رسمي · أسود كامل' } },
+          { img: '/products/stephano/black/4.jpg', caption: { fr: 'Nature & style · Sentier boisé', ar: 'طبيعة وأناقة · مسار غابوي' } },
+          { img: '/products/stephano/black/5.jpg', caption: { fr: 'Black power · Fond sombre', ar: 'قوة الأسود · خلفية داكنة' } },
+          { img: '/products/stephano/black/6.jpg', caption: { fr: 'Look casual · Jardin luxuriant', ar: 'لوك كاجوال · حديقة خضراء' } },
+        ]
+      },
+    ]
   },
   {
     id:     1,
