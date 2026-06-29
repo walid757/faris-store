@@ -22,6 +22,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
   const [popup,   setPopup]   = useState(false)
   const [colorSlides, setColorSlides] = useState({})
   const colorSliderRefs = useRef({})
+  const colorAutoRefs = useRef({})
   const logoTimer              = useRef(null)
   const inactiveTimer          = useRef(null)
   const popupShown             = useRef(false)
@@ -74,6 +75,21 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [form, ordered])
+
+  useEffect(() => {
+    if (!prod.colorSliders) return
+    prod.colorSliders.forEach((cs, ci) => {
+      colorAutoRefs.current[ci] = setInterval(() => {
+        setColorSlides(prev => {
+          const next = ((prev[ci] || 0) + 1) % cs.slides.length
+          const el = colorSliderRefs.current[ci]
+          if (el) el.scrollTo({ left: next * (el.clientWidth * 0.92 + 8), behavior: 'smooth' })
+          return {...prev, [ci]: next}
+        })
+      }, 3500)
+    })
+    return () => Object.values(colorAutoRefs.current).forEach(clearInterval)
+  }, [])
 
   const toast$ = (msg) => { setToast(msg); setTimeout(() => setToast(''), 2600) }
 
@@ -427,8 +443,17 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
           const si = colorSlides[ci] || 0
           const scrollTo = (idx) => {
             const el = colorSliderRefs.current[ci]
-            if (el) el.scrollTo({ left: idx * (el.clientWidth * 0.85 + 8), behavior: 'smooth' })
+            if (el) el.scrollTo({ left: idx * (el.clientWidth * 0.92 + 8), behavior: 'smooth' })
             setColorSlides(prev => ({...prev, [ci]: idx}))
+            clearInterval(colorAutoRefs.current[ci])
+            colorAutoRefs.current[ci] = setInterval(() => {
+              setColorSlides(prev2 => {
+                const next = ((prev2[ci] || 0) + 1) % cs.slides.length
+                const el2 = colorSliderRefs.current[ci]
+                if (el2) el2.scrollTo({ left: next * (el2.clientWidth * 0.92 + 8), behavior: 'smooth' })
+                return {...prev2, [ci]: next}
+              })
+            }, 3500)
           }
           return (
             <div key={ci} style={{ margin: '0 -14px', marginTop: 2 }}>
@@ -449,7 +474,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
                   className="cs-scroll"
                   onScroll={e => {
                     const el = e.currentTarget
-                    const newSi = Math.round(el.scrollLeft / (el.clientWidth * 0.85 + 8))
+                    const newSi = Math.round(el.scrollLeft / (el.clientWidth * 0.92 + 8))
                     if (newSi !== si) setColorSlides(prev => ({...prev, [ci]: newSi}))
                   }}
                   style={{ display: 'flex', gap: 8, overflowX: 'scroll',
