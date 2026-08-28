@@ -32,6 +32,9 @@ export const PRODUCTS = [
     imgs: [
       '/products/stephano/1.png',
       '/products/stephano/2.png',
+      '/products/stephano/3.png',
+      '/products/stephano/4.png',
+      '/products/stephano/5.png',
     ],
     lifestyle: [],
     couleurs: ['Noir', 'Marron', 'Gris ardoise'],
