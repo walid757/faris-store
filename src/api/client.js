@@ -9,7 +9,9 @@ export const createOrder = async (data) => {
   return r.json();
 };
 
-export const fbPixel = () => {};
+export const fbPixel = (event, params) => {
+  if (typeof window !== 'undefined' && window.fbq) window.fbq('track', event, params)
+};
 
 const getToken = () => sessionStorage.getItem("faris_admin_token") || "";
 
