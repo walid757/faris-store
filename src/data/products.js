@@ -27,8 +27,8 @@ export const PRODUCTS = [
       fr: "La bottine Stéphano allie le style Chelsea brogue à une semelle gomme généreuse. Cuir naturel tanné à la main, disponible en trois coloris intemporels.",
       ar: "بوتين ستيفانو يجمع بين أسلوب تشيلسي بروغ ونعل مطاطي مريح. جلد طبيعي مدبوغ يدوياً، متوفر في ثلاثة ألوان كلاسيكية."
     },
-    prix:   320,
-    old:    490,
+    prix:   420,
+    old:    550,
     imgs: [
       '/products/stephano/1.png',
       '/products/stephano/2.png',
