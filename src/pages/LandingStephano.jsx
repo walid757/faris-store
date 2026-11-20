@@ -1,0 +1,275 @@
+import React, { useState, useEffect, useRef } from 'react'
+import { PRODUCTS } from '../data/products.js'
+import { createOrder, fbPixel } from '../api/client.js'
+
+// ── STÉPHANO LANDING PAGES (A/B/n test) ───────────────────────
+// Each page = stacked images from public/products/stephano/lp/XX/
+// Route: #lp/01 ... #lp/14
+
+const P = PRODUCTS.find(p => p.slug === 'stephano') || PRODUCTS[0]
+
+const OFFERS = [
+  { qty: 1, prix: 330, label: 'زوج واحد' },
+  { qty: 2, prix: 590, label: 'جوج أزواج', save: 'وفر 70 درهم' }
+]
+
+// image sizes (width x height) to avoid layout jumps while loading
+export const LP_PAGES = {
+  '01': [[1440,1677],[1440,1557],[1440,1837],[1440,2560],[1440,1677],[1440,2560]],
+  '02': [[1440,1677],[1440,1837],[1440,2560],[1440,1677],[1440,2560]],
+  '03': [[1440,1677],[1440,1557],[1440,1837],[1440,2560],[1440,1677],[1440,2560]],
+  '04': [[1440,1677],[1440,1837],[1440,2560],[1440,1677],[1440,2560]],
+  '05': [[1440,1677],[1440,1837],[1440,1557],[1440,2560],[1440,1677],[1440,2144]],
+  '06': [[1440,1677],[1440,1837],[1440,2560],[1440,1677],[1440,2560]],
+  '07': [[1440,1677],[1440,1557],[1440,1837],[1440,2560],[1440,1677],[1440,2560]],
+  '08': [[1440,1677],[1440,1837],[1440,2560],[1440,1677],[1440,2560]],
+  '09': [[1440,1677],[1440,1557],[1440,1837],[1440,2560],[1440,1677],[1440,2144]],
+  '10': [[1440,1677],[1440,1837],[1440,2560],[1440,1677],[1440,2560],[1440,2560]],
+  '11': [[1440,1717],[1440,2003],[1440,1904],[1440,2313],[1440,2313]],
+  '12': [[1440,2353],[1440,2313],[1440,2088],[1440,2003],[1440,1837]],
+  '13': [[1440,1717],[1440,1904],[1440,1757],[1440,1757],[1440,1757]],
+  '14': [[1440,2353],[1440,2340],[1440,2313],[1440,2220],[1440,2313]]
+}
+
+const CITIES = [
+  'الدار البيضاء','الرباط','فاس','مراكش','أكادير','طنجة',
+  'مكناس','وجدة','القنيطرة','تطوان','الجديدة','سطات',
+  'بني ملال','خريبكة','الناظور','أخرى'
+]
+
+const COLOR_AR = { 'Noir': 'أسود', 'Marron': 'بني', 'Gris ardoise': 'رمادي' }
+
+const BG   = '#000'
+const CARD = '#0d0b09'
+const GOLD = '#c8a27a'
+const LINE = '#5a4632'
+
+const CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+  .lp { background:${BG}; min-height:100vh; font-family:'Tajawal',sans-serif; direction:rtl; color:#f3ece4; }
+  .lp-wrap { max-width:560px; margin:0 auto; background:${BG}; }
+  .lp-img { display:block; width:100%; height:auto; background:#111; }
+  .lp-form { padding:22px 16px 110px; }
+  .lp-box { background:${CARD}; border:1px solid ${LINE}; border-radius:18px; padding:18px 16px; }
+  .lp-h { text-align:center; font-size:22px; font-weight:900; margin:0 0 4px; }
+  .lp-h span { color:${GOLD}; }
+  .lp-sub { text-align:center; font-size:13px; color:#a8998a; margin-bottom:16px; }
+  .lp-offers { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .lp-offer { position:relative; border:1.5px solid ${LINE}; border-radius:14px; padding:12px 8px;
+    text-align:center; cursor:pointer; background:#000; color:#f3ece4; font-family:inherit; }
+  .lp-offer.on { background:${GOLD}; border-color:${GOLD}; color:#1a120a; }
+  .lp-offer b { display:block; font-size:24px; font-weight:900; margin-top:2px; }
+  .lp-save { position:absolute; top:-10px; left:50%; transform:translateX(-50%); white-space:nowrap;
+    background:#c0392b; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:20px; }
+  .lp-lbl { font-size:13px; color:#a8998a; margin:12px 0 6px; font-weight:700; }
+  .lp-chips { display:flex; gap:6px; flex-wrap:wrap; }
+  .lp-chip { padding:8px 12px; border-radius:10px; border:1.5px solid ${LINE}; background:#000;
+    color:#f3ece4; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; min-width:44px; }
+  .lp-chip.on { background:${GOLD}; border-color:${GOLD}; color:#1a120a; }
+  .lp-pair { border-top:1px dashed ${LINE}; margin-top:12px; padding-top:4px; }
+  .lp-in { width:100%; box-sizing:border-box; padding:13px 14px; margin-top:10px; border-radius:12px;
+    border:1.5px solid ${LINE}; background:#000; color:#fff; font-family:inherit; font-size:15px;
+    outline:none; direction:rtl; }
+  .lp-in:focus { border-color:${GOLD}; }
+  .lp-cta { width:100%; margin-top:16px; padding:16px; border:none; border-radius:14px; cursor:pointer;
+    background:${GOLD}; color:#1a120a; font-family:inherit; font-size:18px; font-weight:900;
+    animation: lpPulse 1.8s infinite; }
+  .lp-cta:disabled { opacity:.6; animation:none; }
+  .lp-err { margin-top:10px; color:#ff8a7a; font-size:13px; text-align:center; font-weight:700; }
+  .lp-trust { display:flex; justify-content:space-around; margin-top:14px; font-size:11px; color:#a8998a; text-align:center; }
+  .lp-sticky { position:fixed; bottom:0; left:0; right:0; z-index:50; padding:10px 12px;
+    background:linear-gradient(to top, #000 70%, rgba(0,0,0,0)); }
+  .lp-sticky button { display:block; width:100%; max-width:536px; margin:0 auto; padding:15px;
+    border:none; border-radius:14px; background:${GOLD}; color:#1a120a; font-family:'Tajawal',sans-serif;
+    font-size:17px; font-weight:900; cursor:pointer; box-shadow:0 6px 24px rgba(200,162,122,.35); }
+  @keyframes lpPulse { 0%,100% { transform:scale(1) } 50% { transform:scale(1.025) } }
+`
+
+// ── TRACKING ──────────────────────────────────────────────────
+const lpEvent = (lp, type, extra = {}) =>
+  fetch('/api/lp/event', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lp, type, ...extra })
+  }).catch(() => {})
+
+const ss = {
+  get: k => { try { return sessionStorage.getItem(k) } catch { return null } },
+  set: (k, v) => { try { sessionStorage.setItem(k, v) } catch {} }
+}
+
+export default function LandingStephano({ id }) {
+  const lp = LP_PAGES[id] ? id : '01'
+  const imgs = LP_PAGES[lp]
+
+  const [offer,   setOffer]   = useState(0)
+  const [pairs,   setPairs]   = useState([{ couleur: P.couleurs[0], taille: '' }, { couleur: P.couleurs[0], taille: '' }])
+  const [form,    setForm]    = useState({ nom: '', tel: '', adresse: '', ville: '' })
+  const [error,   setError]   = useState('')
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(null)
+  const [showSticky, setShowSticky] = useState(true)
+  const formRef = useRef(null)
+  const t0 = useRef(Date.now())
+
+  // visit (once per session per page) + landing time
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    const k = 'lp_t0_' + lp
+    const saved = ss.get(k)
+    if (saved) t0.current = parseInt(saved, 10)
+    else {
+      ss.set(k, String(t0.current))
+      lpEvent(lp, 'visit')
+    }
+    fbPixel('ViewContent', { content_name: 'Stephano LP' + lp, value: 330, currency: 'MAD' })
+  }, [lp])
+
+  // form reached (once per session) + hide sticky button when form is visible
+  useEffect(() => {
+    const el = formRef.current
+    if (!el || !('IntersectionObserver' in window)) return
+    const io = new IntersectionObserver(([e]) => {
+      setShowSticky(!e.isIntersecting)
+      if (e.isIntersecting && !ss.get('lp_form_' + lp)) {
+        ss.set('lp_form_' + lp, '1')
+        lpEvent(lp, 'form')
+      }
+    }, { threshold: 0.15 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [lp])
+
+  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }))
+  const setPair = (i, k, v) => setPairs(ps => ps.map((p, j) => j === i ? { ...p, [k]: v } : p))
+  const goForm = () => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  const o = OFFERS[offer]
+  const used = pairs.slice(0, o.qty)
+
+  const submit = async () => {
+    if (used.some(p => !p.taille))       return setError('اختار المقاس')
+    if (!form.nom.trim())                return setError('دخل الاسم الكامل')
+    if (!/^0[67]\d{8}$/.test(form.tel))  return setError('رقم الهاتف ماشي صحيح (06XXXXXXXX)')
+    if (!form.ville)                     return setError('اختار المدينة')
+    if (!form.adresse.trim())            return setError('دخل العنوان')
+    setError(''); setLoading(true)
+    try {
+      const desc = used.map(p => `${p.couleur} EU${p.taille}`).join(' + ')
+      const res = await createOrder({
+        ...form,
+        couleur: used.map(p => p.couleur).join(' + '),
+        taille:  used.map(p => p.taille).join('+'),
+        produit: `${P.nom.fr} LP${lp} x${o.qty} — ${desc}`,
+        prix: o.prix, langue: 'ar'
+      })
+      if (!res || !res.success) { setError(res?.error || 'وقع مشكل، عاود من فضلك'); return }
+      const ms = Date.now() - t0.current
+      if (!ss.get('lp_order_' + lp + '_' + res.ref)) {
+        ss.set('lp_order_' + lp + '_' + res.ref, '1')
+        lpEvent(lp, 'order', { ms, qty: o.qty, prix: o.prix, ref: res.ref })
+      }
+      fbPixel('Purchase', { value: o.prix, currency: 'MAD', content_name: 'Stephano LP' + lp, num_items: o.qty })
+      setSuccess(res)
+      setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50)
+    } catch (e) {
+      setError('وقع مشكل، عاود من فضلك')
+    } finally { setLoading(false) }
+  }
+
+  return (
+    <>
+      <style>{CSS}</style>
+      <div className="lp">
+        <div className="lp-wrap">
+
+          {imgs.map(([w, h], i) => (
+            <img key={i} className="lp-img"
+              src={`/products/stephano/lp/${lp}/${i + 1}.jpg`}
+              width={w} height={h}
+              alt={`Stéphano ${i + 1}`}
+              loading={i < 2 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : 'auto'}
+              decoding="async" />
+          ))}
+
+          <div className="lp-form" ref={formRef}>
+            <div className="lp-box">
+              {success ? (
+                <div style={{ textAlign: 'center', padding: '18px 0' }}>
+                  <div style={{ fontSize: 46 }}>✅</div>
+                  <div className="lp-h">شكراً! <span>الطلب ديالك توصلنا</span></div>
+                  <div className="lp-sub" style={{ marginTop: 8 }}>
+                    غادي نتاصلو بيك فأقرب وقت باش نأكدو الطلب
+                  </div>
+                  <div style={{ fontSize: 13, color: GOLD, fontWeight: 800 }}>رقم الطلب: {success.ref}</div>
+                </div>
+              ) : (
+                <>
+                  <div className="lp-h">اطلب <span>ستيفانو</span> دابا</div>
+                  <div className="lp-sub">الدفع عند الاستلام · التوصيل لجميع المدن</div>
+
+                  <div className="lp-offers">
+                    {OFFERS.map((of, i) => (
+                      <button key={i} className={'lp-offer' + (offer === i ? ' on' : '')} onClick={() => setOffer(i)}>
+                        {of.save && <span className="lp-save">{of.save}</span>}
+                        <span style={{ fontSize: 13, fontWeight: 700 }}>{of.label}</span>
+                        <b>{of.prix} درهم</b>
+                      </button>
+                    ))}
+                  </div>
+
+                  {used.map((p, i) => (
+                    <div key={i} className={i > 0 ? 'lp-pair' : ''}>
+                      {o.qty > 1 && <div className="lp-lbl" style={{ color: GOLD }}>الزوج {i === 0 ? 'الأول' : 'الثاني'}</div>}
+                      <div className="lp-lbl">اللون</div>
+                      <div className="lp-chips">
+                        {P.couleurs.map(c => (
+                          <button key={c} className={'lp-chip' + (p.couleur === c ? ' on' : '')}
+                            onClick={() => setPair(i, 'couleur', c)}>{COLOR_AR[c] || c}</button>
+                        ))}
+                      </div>
+                      <div className="lp-lbl">المقاس</div>
+                      <div className="lp-chips">
+                        {P.tailles.map(t => (
+                          <button key={t} className={'lp-chip' + (p.taille === String(t) ? ' on' : '')}
+                            onClick={() => setPair(i, 'taille', String(t))}>{t}</button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+
+                  <input className="lp-in" placeholder="الاسم الكامل" value={form.nom} onChange={set('nom')} />
+                  <input className="lp-in" placeholder="رقم الهاتف" inputMode="tel" maxLength={10}
+                    value={form.tel} onChange={set('tel')} />
+                  <select className="lp-in" value={form.ville} onChange={set('ville')}>
+                    <option value="">اختار المدينة</option>
+                    {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <input className="lp-in" placeholder="العنوان" value={form.adresse} onChange={set('adresse')} />
+
+                  <button className="lp-cta" onClick={submit} disabled={loading}>
+                    {loading ? '...' : `أكد الطلب — ${o.prix} درهم`}
+                  </button>
+                  {error && <div className="lp-err">{error}</div>}
+
+                  <div className="lp-trust">
+                    <span>🚚<br/>توصيل سريع</span>
+                    <span>💵<br/>الدفع عند الاستلام</span>
+                    <span>🔁<br/>تبديل المقاس</span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {showSticky && !success && (
+          <div className="lp-sticky">
+            <button onClick={goForm}>اطلب دابا — {o.prix} درهم</button>
+          </div>
+        )}
+      </div>
+    </>
+  )
+}

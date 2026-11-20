@@ -7,12 +7,14 @@ import ThemeLuxe   from './themes/ThemeLuxe.jsx'
 import ThemeFlash  from './themes/ThemeFlash.jsx'
 import ThemeStory  from './themes/ThemeStory.jsx'
 import ThemeFassi  from './themes/ThemeFassi.jsx'
+import LandingStephano from './pages/LandingStephano.jsx'
 
 // ── SIMPLE ROUTER ─────────────────────────────────────────────
 const getPage = () => {
   const hash = window.location.hash
   if (hash === '#admin')           return 'admin'
   if (hash.startsWith('#produit')) return 'product'
+  if (hash.startsWith('#lp/'))     return 'lp'
   return 'home'
 }
 
@@ -57,6 +59,8 @@ export default function App() {
   }
 
   if (page === 'admin') return <><FontLoader/><AdminPage onBack={nav.home} onThemeChange={setTheme} /></>
+
+  if (page === 'lp') return <LandingStephano id={window.location.hash.replace('#lp/', '').slice(0, 2)} />
 
   if (page === 'product') return (
     <ProductPage

@@ -5,3 +5,6 @@
 - Added `colorSliders` field to Stéphano product in products.js
 - Copied 18 categorized boot images to public/products/stephano/gray/, brown/, black/
 - Added `colorSlides` state and color slider section in ProductPage.jsx (between HOOK 01 and HOOK 02)
+
+## 2026-11-20
+- Added A/B test for Stéphano: 14 landing pages at #lp/01..#lp/14 (src/pages/LandingStephano.jsx), images in public/products/stephano/lp/ (1440px, q90), offer 330 MAD / 590 MAD for 2 pairs, tracking (visits, form views, orders, time to order) via /api/lp/event + data/lp_stats.json, and admin tab "🧪 Test A/B" (src/components/LpStatsPanel.jsx)

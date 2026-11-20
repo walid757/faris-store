@@ -4,6 +4,7 @@ import {
   blockIP, unblockIP, getBlockedIPs, getStats,
   getTheme, setTheme
 } from '../api/client.js'
+import LpStatsPanel from '../components/LpStatsPanel.jsx'
 
 const AD = '#070c18'
 const AB = '#0b1525'
@@ -192,6 +193,14 @@ export default function AdminPage({ onBack, onThemeChange }) {
             {l}
           </button>
         ))}
+        <button onClick={() => setTab('lp')}
+          style={{ padding: '8px 14px', fontSize: 12, cursor: 'pointer',
+            background: tab === 'lp' ? `linear-gradient(135deg,${T},#0d3d4a)` : 'transparent',
+            color: tab === 'lp' ? 'white' : '#475569',
+            border: tab === 'lp' ? `1px solid ${T}` : '1px solid transparent',
+            borderRadius: 10, fontFamily: 'Inter,sans-serif', fontWeight: 600 }}>
+          🧪 Test A/B
+        </button>
       </div>
 
       <div style={{ padding: '12px 16px 28px' }}>
@@ -464,6 +473,9 @@ export default function AdminPage({ onBack, onThemeChange }) {
             </div>
           )
         })()}
+
+        {/* A/B TEST TAB */}
+        {tab === 'lp' && <LpStatsPanel />}
 
         {/* SETTINGS TAB */}
         {tab === 'settings' && (

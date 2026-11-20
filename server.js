@@ -292,6 +292,40 @@ app.get('/api/admin/stats', adminAuth, (req, res) => {
   })
 })
 
+// ── LANDING PAGES A/B TEST (Stéphano #lp/01..14) ─────────────
+const LP_FILE = path.join(DATA_DIR, 'lp_stats.json')
+if (!fs.existsSync(LP_FILE)) writeJSON(LP_FILE, { since: new Date().toISOString(), pages: {} })
+const LP_ID = /^(0[1-9]|1[0-4])$/
+
+app.post('/api/lp/event', (req, res) => {
+  const { lp, type, ms, qty, prix } = req.body || {}
+  if (!LP_ID.test(String(lp)) || !['visit', 'form', 'order'].includes(type))
+    return res.status(400).json({ error: 'invalid' })
+  const data = readJSON(LP_FILE, { since: new Date().toISOString(), pages: {} })
+  const p = data.pages[lp] || (data.pages[lp] = { visits: 0, forms: 0, orders: 0, pairs: 0, revenue: 0, times: [] })
+  if (type === 'visit') p.visits++
+  if (type === 'form')  p.forms++
+  if (type === 'order') {
+    p.orders++
+    p.pairs   += Number(qty) === 2 ? 2 : 1
+    p.revenue += [330, 590].includes(Number(prix)) ? Number(prix) : 0
+    const t = Number(ms)
+    if (t > 0 && t < 7 * 24 * 3600 * 1000) p.times.push(Math.round(t))
+  }
+  writeJSON(LP_FILE, data)
+  res.json({ ok: true })
+})
+
+app.get('/api/admin/lp-stats', adminAuth, (req, res) => {
+  res.json(readJSON(LP_FILE, { pages: {} }))
+})
+
+app.post('/api/admin/lp-stats/reset', adminAuth, (req, res) => {
+  writeJSON(LP_FILE, { since: new Date().toISOString(), pages: {} })
+  console.log('[LP] Stats reset')
+  res.json({ success: true })
+})
+
 // ── SERVE FRONTEND ────────────────────────────────────────────
 const distPath = path.join(__dirname, 'dist')
 if (fs.existsSync(distPath)) {
