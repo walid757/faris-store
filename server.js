@@ -376,6 +376,42 @@ app.post('/api/admin/lp-active', adminAuth, (req, res) => {
   res.json({ success: true, active })
 })
 
+// ── REMOVE TEST ORDERS (by ref) + subtract them from LP stats ──
+// body: { refs: ['FAR-xxxxxx'], lpTimes: { '07': [ms, ...] } }  (lpTimes optional)
+app.post('/api/admin/orders/remove', adminAuth, (req, res) => {
+  const refs = Array.isArray(req.body?.refs) ? req.body.refs.map(String) : []
+  if (!refs.length) return res.status(400).json({ error: 'refs requis' })
+  const orders = readJSON(FILES.orders, [])
+  const removed = orders.filter(o => refs.includes(o.ref))
+  writeJSON(FILES.orders, orders.filter(o => !refs.includes(o.ref)))
+
+  const stats = readJSON(FILES.stats, { visits: 0, orders: 0 })
+  stats.orders = Math.max(0, (stats.orders || 0) - removed.length)
+  writeJSON(FILES.stats, stats)
+
+  const data = readJSON(LP_FILE, { pages: {} })
+  removed.forEach(o => {
+    const m = /LP(\d{2}) x(\d)/.exec(o.produit || '')
+    if (!m || !data.pages[m[1]]) return
+    const p = data.pages[m[1]]
+    p.orders  = Math.max(0, (p.orders || 0) - 1)
+    p.pairs   = Math.max(0, (p.pairs || 0) - (Number(m[2]) === 2 ? 2 : 1))
+    p.revenue = Math.max(0, (p.revenue || 0) - (Number(o.prix) || 0))
+  })
+  const lpTimes = req.body?.lpTimes || {}
+  Object.keys(lpTimes).forEach(lp => {
+    const p = data.pages[lp]
+    if (!p || !Array.isArray(p.times)) return
+    ;(lpTimes[lp] || []).forEach(t => {
+      const i = p.times.indexOf(Number(t))
+      if (i !== -1) p.times.splice(i, 1)
+    })
+  })
+  writeJSON(LP_FILE, data)
+  console.log(`[ORDERS] Removed test orders: ${removed.map(o => o.ref).join(', ')}`)
+  res.json({ success: true, removed: removed.map(o => o.ref) })
+})
+
 // ── SERVE FRONTEND ────────────────────────────────────────────
 const distPath = path.join(__dirname, 'dist')
 if (fs.existsSync(distPath)) {
