@@ -11,3 +11,4 @@
 - 2026-11-21: Added single Facebook link #test (src/pages/LpRotator.jsx) that splits visitors evenly across active Stéphano pages (same visitor keeps same page), time-on-page tracking (/api/lp/stay), admin toggles to activate/deactivate pages + "Temps moyen sur la page" column
 - 2026-11-21: Stéphano landing pages: red sticky banner "عرض محدود ابتداءً من اليوم [date]" (330 instead of 490, 2 pairs 590), old prices struck in offers, city is now a free text field, typing Casa/Casablanca/الدار البيضاء shows a required district list (30 districts + other)
 - 2026-11-21: Offer banner restyled to match landing pages (dark + gold), animated flickering 🔥 on both sides, soft gold shine
+- 2026-11-21: Stéphano landing pages wording: "حذاء واحد بـ330" and "جوج أحذية بـ590" in banner and order form (instead of زوج / جوج أزواج)

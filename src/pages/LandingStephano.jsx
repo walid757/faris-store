@@ -9,8 +9,8 @@ import { createOrder, fbPixel } from '../api/client.js'
 const P = PRODUCTS.find(p => p.slug === 'stephano') || PRODUCTS[0]
 
 const OFFERS = [
-  { qty: 1, prix: 330, old: 490, label: 'زوج واحد' },
-  { qty: 2, prix: 590, old: 980, label: 'جوج أزواج', save: 'وفر 70 درهم' }
+  { qty: 1, prix: 330, old: 490, label: 'حذاء واحد' },
+  { qty: 2, prix: 590, old: 980, label: 'جوج أحذية', save: 'وفر 70 درهم' }
 ]
 
 // Casablanca: visitor types the city; if it's Casa we ask for the district
@@ -265,7 +265,7 @@ export default function LandingStephano({ id }) {
             <span className="lp-banner-txt">
               <span className="lp-tag">عرض محدود</span> ابتداءً من اليوم {todayStr()}
               <br />
-              زوج بـ<b>330 درهم</b> بدل <s>490</s> · جوج بـ<b>590 درهم</b>
+              حذاء واحد بـ<b>330 درهم</b> بدل <s>490</s> · جوج أحذية بـ<b>590 درهم</b>
             </span>
             <span className="lp-flame r" aria-hidden="true">🔥</span>
           </div>
@@ -309,7 +309,7 @@ export default function LandingStephano({ id }) {
 
                   {used.map((p, i) => (
                     <div key={i} className={i > 0 ? 'lp-pair' : ''}>
-                      {o.qty > 1 && <div className="lp-lbl" style={{ color: GOLD }}>الزوج {i === 0 ? 'الأول' : 'الثاني'}</div>}
+                      {o.qty > 1 && <div className="lp-lbl" style={{ color: GOLD }}>الحذاء {i === 0 ? 'الأول' : 'الثاني'}</div>}
                       <div className="lp-lbl">اللون</div>
                       <div className="lp-chips">
                         {P.couleurs.map(c => (
