@@ -9,9 +9,28 @@ import { createOrder, fbPixel } from '../api/client.js'
 const P = PRODUCTS.find(p => p.slug === 'stephano') || PRODUCTS[0]
 
 const OFFERS = [
-  { qty: 1, prix: 330, label: 'زوج واحد' },
-  { qty: 2, prix: 590, label: 'جوج أزواج', save: 'وفر 70 درهم' }
+  { qty: 1, prix: 330, old: 490, label: 'زوج واحد' },
+  { qty: 2, prix: 590, old: 980, label: 'جوج أزواج', save: 'وفر 70 درهم' }
 ]
+
+// Casablanca: visitor types the city; if it's Casa we ask for the district
+const CASA_QUARTIERS = [
+  'Sidi Maarouf','Lissasfa','Moulay Rachid','Sidi Othmane','Sbata','Beauséjour','Oasis',
+  'Bourgogne','Ain Diab','Centre Ville','Derb Omar','Derb Sultan','Oulfa','Mers Sultan',
+  'Maarif','Ain Chock','Californie','Hay Hassani','Bernoussi','Ain Sebaa','Anassi',
+  'Sidi Moumen','Hay Mohammadi','Ain Borja','Roches Noires','Anfa','Sidi Hajjaj',
+  'Tacharouk','Lahraouyine','Bournazel'
+]
+const isCasa = v => {
+  const s = (v || '').trim().toLowerCase().replace(/\s+/g, ' ')
+  if (!s) return false
+  return /^(casa|casablanca|casa blanca|kaza|kasa|dar el beida|dar beida)\b/.test(s) ||
+    /^(كازا|كازابلانكا|كازا بلانكا|الدار البيضاء|الدارالبيضاء|البيضاء|الدار البيضا|البيضا)/.test(s)
+}
+const todayStr = () => {
+  const d = new Date()
+  return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear()
+}
 
 // image sizes (width x height) to avoid layout jumps while loading
 export const LP_PAGES = {
@@ -83,6 +102,10 @@ const CSS = `
     border:none; border-radius:14px; background:${GOLD}; color:#1a120a; font-family:'Tajawal',sans-serif;
     font-size:17px; font-weight:900; cursor:pointer; box-shadow:0 6px 24px rgba(200,162,122,.35); }
   @keyframes lpPulse { 0%,100% { transform:scale(1) } 50% { transform:scale(1.025) } }
+  .lp-banner { position:sticky; top:0; z-index:60; background:#c0392b; color:#fff; text-align:center;
+    padding:9px 10px; font-size:13.5px; font-weight:800; line-height:1.5; box-shadow:0 2px 10px rgba(0,0,0,.4); }
+  .lp-banner s { opacity:.75; font-weight:600; }
+  .lp-old { display:block; font-size:12px; text-decoration:line-through; opacity:.6; font-weight:600; }
 `
 
 // ── TRACKING ──────────────────────────────────────────────────
@@ -105,6 +128,7 @@ export default function LandingStephano({ id }) {
   const [offer,   setOffer]   = useState(0)
   const [pairs,   setPairs]   = useState([{ couleur: P.couleurs[0], taille: '' }, { couleur: P.couleurs[0], taille: '' }])
   const [form,    setForm]    = useState({ nom: '', tel: '', adresse: '', ville: '' })
+  const [quartier, setQuartier] = useState('')
   const [error,   setError]   = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(null)
@@ -180,13 +204,15 @@ export default function LandingStephano({ id }) {
     if (used.some(p => !p.taille))       return setError('اختار المقاس')
     if (!form.nom.trim())                return setError('دخل الاسم الكامل')
     if (!/^0[67]\d{8}$/.test(form.tel))  return setError('رقم الهاتف ماشي صحيح (06XXXXXXXX)')
-    if (!form.ville)                     return setError('اختار المدينة')
+    if (!form.ville.trim())              return setError('كتب المدينة')
+    if (isCasa(form.ville) && !quartier) return setError('اختار المقاطعة ديالك فكازا')
     if (!form.adresse.trim())            return setError('دخل العنوان')
     setError(''); setLoading(true)
     try {
       const desc = used.map(p => `${p.couleur} EU${p.taille}`).join(' + ')
+      const ville = isCasa(form.ville) ? `Casablanca - ${quartier}` : form.ville.trim()
       const res = await createOrder({
-        ...form,
+        ...form, ville,
         couleur: used.map(p => p.couleur).join(' + '),
         taille:  used.map(p => p.taille).join('+'),
         produit: `${P.nom.fr} LP${lp} x${o.qty} — ${desc}`,
@@ -211,6 +237,12 @@ export default function LandingStephano({ id }) {
       <style>{CSS}</style>
       <div className="lp">
         <div className="lp-wrap">
+
+          <div className="lp-banner">
+            🔥 عرض محدود ابتداءً من اليوم {todayStr()}
+            <br />
+            زوج بـ330 درهم بدل <s>490</s> · جوج بـ590 درهم
+          </div>
 
           {imgs.map(([w, h], i) => (
             <img key={i} className="lp-img"
@@ -244,6 +276,7 @@ export default function LandingStephano({ id }) {
                         {of.save && <span className="lp-save">{of.save}</span>}
                         <span style={{ fontSize: 13, fontWeight: 700 }}>{of.label}</span>
                         <b>{of.prix} درهم</b>
+                        <span className="lp-old">{of.old} درهم</span>
                       </button>
                     ))}
                   </div>
@@ -271,10 +304,16 @@ export default function LandingStephano({ id }) {
                   <input className="lp-in" placeholder="الاسم الكامل" value={form.nom} onChange={set('nom')} />
                   <input className="lp-in" placeholder="رقم الهاتف" inputMode="tel" maxLength={10}
                     value={form.tel} onChange={set('tel')} />
-                  <select className="lp-in" value={form.ville} onChange={set('ville')}>
-                    <option value="">اختار المدينة</option>
-                    {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  <input className="lp-in" placeholder="المدينة" value={form.ville}
+                    onChange={e => { set('ville')(e); if (!isCasa(e.target.value)) setQuartier('') }} />
+                  {isCasa(form.ville) && (
+                    <select className="lp-in" value={quartier} onChange={e => setQuartier(e.target.value)}
+                      style={{ borderColor: quartier ? LINE : GOLD }}>
+                      <option value="">— اختار المقاطعة —</option>
+                      {CASA_QUARTIERS.map(q => <option key={q} value={q}>{q}</option>)}
+                      <option value="Autre">حي آخر</option>
+                    </select>
+                  )}
                   <input className="lp-in" placeholder="العنوان" value={form.adresse} onChange={set('adresse')} />
 
                   <button className="lp-cta" onClick={submit} disabled={loading}>
