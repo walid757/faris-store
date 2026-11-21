@@ -231,13 +231,17 @@ export default function LandingStephano({ id }) {
     if (!form.adresse.trim())            return setError('دخل العنوان')
     setError(''); setLoading(true)
     try {
-      const desc = used.map(p => `${p.couleur} EU${p.taille}`).join(' + ')
+      // order reads cleanly: "Stéphano Noir 42" / "Stéphano Noir 42 + Stéphano Marron 43"
+      // (admin / sheet / WhatsApp append couleur + taille after produit)
+      const short = c => c === 'Gris ardoise' ? 'Gris' : c
+      const last  = used[used.length - 1]
+      const before = used.slice(0, -1).map(p => `${P.nom.fr} ${short(p.couleur)} ${p.taille} + `).join('')
       const ville = isCasa(form.ville) ? `Casablanca - ${quartier}` : form.ville.trim()
       const res = await createOrder({
         ...form, ville,
-        couleur: used.map(p => p.couleur).join(' + '),
-        taille:  used.map(p => p.taille).join('+'),
-        produit: `${P.nom.fr} LP${lp} x${o.qty} — ${desc}`,
+        couleur: short(last.couleur),
+        taille:  last.taille,
+        produit: `${before}${P.nom.fr}`,
         prix: o.prix, langue: 'ar'
       })
       if (!res || !res.success) { setError(res?.error || 'وقع مشكل، عاود من فضلك'); return }

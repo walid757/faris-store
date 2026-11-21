@@ -52,7 +52,7 @@ const appendToSheet = async (order) => {
           order.prix,
           order.ville,
           order.produit,
-          [order.couleur, order.taille ? 'EU' + order.taille : ''].filter(Boolean).join(' '),
+          [order.couleur, order.taille || ''].filter(Boolean).join(' '),
           ''
         ]]
       }
@@ -186,7 +186,7 @@ app.post('/api/orders', orderLimiter, (req, res) => {
     `👤 ${order.nom}\n` +
     `📞 ${order.tel}\n` +
     `📍 ${order.adresse}, ${order.ville}\n` +
-    `👟 ${order.produit} ${order.couleur} ${order.taille ? 'EU'+order.taille : ''}\n` +
+    `👟 ${order.produit} ${order.couleur} ${order.taille || ''}\n` +
     `💰 ${order.prix} MAD\n` +
     `🕐 ${order.timeStr}`
   )
@@ -311,6 +311,7 @@ app.post('/api/lp/event', (req, res) => {
     p.revenue += [330, 590].includes(Number(prix)) ? Number(prix) : 0
     const t = Number(ms)
     if (t > 0 && t < 7 * 24 * 3600 * 1000) p.times.push(Math.round(t))
+    if (req.body.ref) (p.refs = p.refs || []).push(String(req.body.ref).slice(0, 20))
   }
   writeJSON(LP_FILE, data)
   res.json({ ok: true })
@@ -392,10 +393,13 @@ app.post('/api/admin/orders/remove', adminAuth, (req, res) => {
   const data = readJSON(LP_FILE, { pages: {} })
   removed.forEach(o => {
     const m = /LP(\d{2}) x(\d)/.exec(o.produit || '')
-    if (!m || !data.pages[m[1]]) return
-    const p = data.pages[m[1]]
+    const lpId = m ? m[1] : Object.keys(data.pages).find(k => (data.pages[k].refs || []).includes(o.ref))
+    if (!lpId || !data.pages[lpId]) return
+    const qty = m ? Number(m[2]) : (Number(o.prix) === 590 ? 2 : 1)
+    const p = data.pages[lpId]
+    if (p.refs) p.refs = p.refs.filter(r => r !== o.ref)
     p.orders  = Math.max(0, (p.orders || 0) - 1)
-    p.pairs   = Math.max(0, (p.pairs || 0) - (Number(m[2]) === 2 ? 2 : 1))
+    p.pairs   = Math.max(0, (p.pairs || 0) - (qty === 2 ? 2 : 1))
     p.revenue = Math.max(0, (p.revenue || 0) - (Number(o.prix) || 0))
   })
   const lpTimes = req.body?.lpTimes || {}

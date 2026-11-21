@@ -250,7 +250,7 @@ export default function AdminPage({ onBack, onThemeChange }) {
                         📞 {o.tel} · 📍 {o.adresse}, {o.ville}
                       </div>
                       <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 1 }}>
-                        👟 {o.produit} {o.couleur} {o.taille ? `EU${o.taille}` : ''}
+                        👟 {o.produit} {o.couleur} {o.taille || ''}
                       </div>
                       <div style={{ fontSize: 11, color: '#475569', marginTop: 1 }}>
                         🕐 {o.timeStr || o.time?.substring(0,19)}
