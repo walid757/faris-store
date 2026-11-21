@@ -140,6 +140,35 @@ export default function LandingStephano({ id }) {
     return () => io.disconnect()
   }, [lp])
 
+  // time spent on the page (only while visible), sent when leaving / hiding
+  useEffect(() => {
+    let start = document.visibilityState === 'visible' ? Date.now() : null
+    const flush = () => {
+      if (start === null) return
+      const ms = Date.now() - start
+      start = null
+      if (ms < 500) return
+      const first = !ss.get('lp_stay_' + lp)
+      ss.set('lp_stay_' + lp, '1')
+      const body = JSON.stringify({ lp, ms, first })
+      try {
+        if (navigator.sendBeacon) navigator.sendBeacon('/api/lp/stay', new Blob([body], { type: 'application/json' }))
+        else fetch('/api/lp/stay', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true })
+      } catch {}
+    }
+    const onVis = () => {
+      if (document.visibilityState === 'hidden') flush()
+      else if (start === null) start = Date.now()
+    }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('pagehide', flush)
+    return () => {
+      flush()
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('pagehide', flush)
+    }
+  }, [lp])
+
   const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }))
   const setPair = (i, k, v) => setPairs(ps => ps.map((p, j) => j === i ? { ...p, [k]: v } : p))
   const goForm = () => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })

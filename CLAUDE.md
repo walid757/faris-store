@@ -49,3 +49,5 @@ Never reformat existing code.
 
 ## DEPENDENCIES RULE:
 Never install a new npm package without asking me first.- Session 2026-11-20 — Worked: A/B test with 14 Stéphano landing pages (#lp/01..14), images resized from Desktop folder "Stephano 10 pages produit" to 1440px q90 (user wants HIGH quality on phone), admin tab "🧪 Test A/B" ranks pages by conversion % and median time to order. Tried: headless Chrome at 390px shows cropped page (Chrome min width), not a real bug — test at 560px. Status: built locally, NOT yet pushed/deployed to Railway.
+- Update 2026-11-20 late — Status: A/B pages DEPLOYED and live at https://faris-store-production.up.railway.app/#lp/01..14 (Railway was paused for unpaid bill; after payment, auto-deploy missed the push — fixed with an empty commit to retrigger). Admin tab "🧪 Test A/B" live.
+- 2026-11-21 — Worked: one link https://faris-store-production.up.railway.app/#test rotates visitors over active LP pages (balanced by server "assigned" counter, data/lp_active.json), time-on-page metric. User wants to explain plan FIRST, then code (rejected edits when I coded before explaining).

@@ -23,10 +23,26 @@ export default function LpStatsPanel() {
   const [data, setData]     = useState(null)
   const [sort, setSort]     = useState('cr')
   const [copied, setCopied] = useState('')
+  const [active, setActive] = useState(null)
 
-  const load = () =>
-    fetch('/api/admin/lp-stats', { headers: { 'x-admin-token': token() } })
+  const load = () => {
+    fetch('/api/admin/lp-active', { headers: { 'x-admin-token': token() } })
+      .then(r => r.json()).then(d => setActive(Array.isArray(d.active) ? d.active : null)).catch(() => {})
+    return fetch('/api/admin/lp-stats', { headers: { 'x-admin-token': token() } })
       .then(r => r.json()).then(setData).catch(() => setData({ pages: {} }))
+  }
+
+  const toggle = async id => {
+    const cur = active || []
+    const next = cur.includes(id) ? cur.filter(x => x !== id) : [...cur, id].sort()
+    if (!next.length) return window.alert('Il faut au moins une page active')
+    const r = await fetch('/api/admin/lp-active', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': token() },
+      body: JSON.stringify({ active: next })
+    }).then(r => r.json()).catch(() => ({}))
+    if (r.success) setActive(r.active)
+  }
 
   useEffect(() => { load() }, [])
 
@@ -56,7 +72,9 @@ export default function LpStatsPanel() {
       revenue: p.revenue || 0,
       cr:      pct(p.orders || 0, p.visits || 0),
       formRate: pct(p.forms || 0, p.visits || 0),
-      median
+      median,
+      stay: p.staySessions ? (p.stay || 0) / p.staySessions : null,
+      on: !active || active.includes(id)
     }
   })
 
@@ -65,6 +83,7 @@ export default function LpStatsPanel() {
     orders: (a, b) => b.orders - a.orders,
     fast:   (a, b) => (a.median ?? 1e15) - (b.median ?? 1e15),
     visits: (a, b) => b.visits - a.visits,
+    stay:   (a, b) => (b.stay ?? -1) - (a.stay ?? -1),
     id:     (a, b) => a.id.localeCompare(b.id)
   }
   const sorted = rows.slice().sort(sorters[sort])
@@ -72,6 +91,7 @@ export default function LpStatsPanel() {
   const reliable = rows.filter(r => r.visits >= MIN_VISITS)
   const best = reliable.slice().sort(sorters.cr)[0]
   const fastest = reliable.filter(r => r.median !== null).sort(sorters.fast)[0]
+  const stickiest = reliable.filter(r => r.stay !== null).sort(sorters.stay)[0]
 
   const tot = rows.reduce((s, r) => ({ v: s.v + r.visits, o: s.o + r.orders, rev: s.rev + r.revenue }), { v: 0, o: 0, rev: 0 })
   const origin = window.location.origin
@@ -94,10 +114,40 @@ export default function LpStatsPanel() {
           sub={best ? best.cr.toFixed(2) + '% · ' + best.orders + ' cmd' : `min. ${MIN_VISITS} visites/page`} />
         <Card label="⚡ Conversion la + rapide" value={fastest ? 'Page ' + fastest.id : '—'}
           sub={fastest ? 'médiane ' + fmtTime(fastest.median) : `min. ${MIN_VISITS} visites/page`} />
+        <Card label="⏱ Garde le client le + longtemps" value={stickiest ? 'Page ' + stickiest.id : '—'}
+          sub={stickiest ? 'moyenne ' + fmtTime(stickiest.stay) + ' sur la page' : `min. ${MIN_VISITS} visites/page`} />
+      </div>
+
+      <div style={{ background: '#052e16', border: '1px solid #10b981', borderRadius: 10, padding: '10px 12px', marginBottom: 12 }}>
+        <div style={{ fontSize: 12, color: '#6ee7b7', fontWeight: 700, marginBottom: 6 }}>
+          🔗 Lien unique pour Facebook (répartit les visiteurs sur les pages actives)
+        </div>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <code style={{ fontSize: 13, color: 'white', wordBreak: 'break-all' }}>{origin + '/#test'}</code>
+          <button onClick={() => copy(origin + '/#test')} style={btn}>
+            {copied === origin + '/#test' ? '✓ Copié' : 'Copier'}
+          </button>
+        </div>
+        <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 8 }}>
+          Pages actives ({rows.filter(r => r.on).length}/14) — cliquez pour activer / désactiver :
+        </div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+          {ids.map(id => {
+            const on = !active || active.includes(id)
+            return (
+              <button key={id} onClick={() => toggle(id)}
+                style={{ ...btn, minWidth: 46, fontWeight: 800,
+                  background: on ? '#10b981' : AD, color: on ? '#052e16' : '#475569',
+                  borderColor: on ? '#10b981' : AB2 }}>
+                {on ? '✓ ' : ''}{id}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
-        {[['cr', 'Conversion %'], ['orders', 'Commandes'], ['fast', 'Rapidité'], ['visits', 'Visites'], ['id', 'N° page']].map(([k, l]) => (
+        {[['cr', 'Conversion %'], ['orders', 'Commandes'], ['fast', 'Rapidité'], ['stay', 'Temps passé'], ['visits', 'Visites'], ['id', 'N° page']].map(([k, l]) => (
           <button key={k} onClick={() => setSort(k)}
             style={{ ...btn, background: sort === k ? T : AB, color: sort === k ? 'white' : '#94a3b8' }}>
             Trier: {l}
@@ -110,7 +160,7 @@ export default function LpStatsPanel() {
           <thead>
             <tr>
               <th style={th}>Page</th><th style={th}>Visites</th><th style={th}>Ont vu le formulaire</th>
-              <th style={th}>Commandes</th><th style={th}>Conversion</th><th style={th}>Temps médian → commande</th>
+              <th style={th}>Commandes</th><th style={th}>Conversion</th><th style={th}>Temps médian → commande</th><th style={th}>Temps moyen sur la page</th>
               <th style={th}>Paires</th><th style={th}>CA (MAD)</th><th style={th}>Lien pub</th>
             </tr>
           </thead>
@@ -119,7 +169,7 @@ export default function LpStatsPanel() {
               const url = origin + '/#lp/' + r.id
               const win = best && r.id === best.id
               return (
-                <tr key={r.id} style={{ background: win ? '#052e16' : 'transparent' }}>
+                <tr key={r.id} style={{ background: win ? '#052e16' : 'transparent', opacity: r.on ? 1 : 0.45 }}>
                   <td style={{ ...td, fontWeight: 800 }}>
                     <a href={'#lp/' + r.id} target="_blank" rel="noreferrer" style={{ color: '#7dd3fc' }}>{r.id}</a>
                     {win && ' 🏆'}
@@ -131,6 +181,7 @@ export default function LpStatsPanel() {
                     {r.cr.toFixed(2)}%
                   </td>
                   <td style={td}>{fmtTime(r.median)}</td>
+                  <td style={td}>{fmtTime(r.stay)}</td>
                   <td style={td}>{r.pairs}</td>
                   <td style={td}>{r.revenue}</td>
                   <td style={td}>
@@ -149,6 +200,8 @@ export default function LpStatsPanel() {
         Visite = 1 visiteur unique par session. Conversion = commandes ÷ visites.
         Les pages avec moins de {MIN_VISITS} visites sont en gris (pas encore fiables).
         Le temps est mesuré entre l'arrivée sur la page et la commande.
+        Temps moyen sur la page = temps passé (page visible) par visiteur.
+        Les pages désactivées (grisées) ne reçoivent plus de visiteurs via le lien unique.
       </div>
     </div>
   )

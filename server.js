@@ -326,6 +326,56 @@ app.post('/api/admin/lp-stats/reset', adminAuth, (req, res) => {
   res.json({ success: true })
 })
 
+// ── LP ROTATOR: one link (#test) splits visitors across active pages ──
+const LP_ACTIVE_FILE = path.join(DATA_DIR, 'lp_active.json')
+const ALL_LP = Array.from({ length: 14 }, (_, i) => String(i + 1).padStart(2, '0'))
+if (!fs.existsSync(LP_ACTIVE_FILE)) writeJSON(LP_ACTIVE_FILE, { active: ALL_LP })
+const newLpPage = () => ({ visits: 0, forms: 0, orders: 0, pairs: 0, revenue: 0, times: [] })
+
+app.get('/api/lp/next', (req, res) => {
+  const active = (readJSON(LP_ACTIVE_FILE, { active: ALL_LP }).active || []).filter(id => LP_ID.test(id))
+  const pool = active.length ? active : ALL_LP
+  // returning visitor keeps the same page while it is still active
+  if (pool.includes(String(req.query.keep))) return res.json({ lp: String(req.query.keep) })
+  const data = readJSON(LP_FILE, { since: new Date().toISOString(), pages: {} })
+  const assigned = id => (data.pages[id] && data.pages[id].assigned) || 0
+  const min = Math.min(...pool.map(assigned))
+  const candidates = pool.filter(id => assigned(id) === min)
+  const lp = candidates[Math.floor(Math.random() * candidates.length)]
+  const p = data.pages[lp] || (data.pages[lp] = newLpPage())
+  p.assigned = (p.assigned || 0) + 1
+  writeJSON(LP_FILE, data)
+  res.json({ lp })
+})
+
+// time spent on a page (sent when the visitor leaves / hides the page)
+app.post('/api/lp/stay', express.text({ type: '*/*' }), (req, res) => {
+  let body = req.body
+  if (typeof body === 'string') { try { body = JSON.parse(body) } catch { body = {} } }
+  const { lp, ms, first } = body || {}
+  const t = Math.round(Number(ms))
+  if (!LP_ID.test(String(lp)) || !(t > 0)) return res.status(400).json({ error: 'invalid' })
+  const data = readJSON(LP_FILE, { since: new Date().toISOString(), pages: {} })
+  const p = data.pages[lp] || (data.pages[lp] = newLpPage())
+  p.stay = (p.stay || 0) + Math.min(t, 30 * 60 * 1000)
+  if (first) p.staySessions = (p.staySessions || 0) + 1
+  writeJSON(LP_FILE, data)
+  res.json({ ok: true })
+})
+
+app.get('/api/admin/lp-active', adminAuth, (req, res) => {
+  res.json(readJSON(LP_ACTIVE_FILE, { active: ALL_LP }))
+})
+
+app.post('/api/admin/lp-active', adminAuth, (req, res) => {
+  const pages = Array.isArray(req.body?.active) ? req.body.active.map(String).filter(id => LP_ID.test(id)) : null
+  if (!pages || !pages.length) return res.status(400).json({ error: 'Au moins une page active' })
+  const active = [...new Set(pages)].sort()
+  writeJSON(LP_ACTIVE_FILE, { active })
+  console.log(`[LP] Active pages: ${active.join(',')}`)
+  res.json({ success: true, active })
+})
+
 // ── SERVE FRONTEND ────────────────────────────────────────────
 const distPath = path.join(__dirname, 'dist')
 if (fs.existsSync(distPath)) {
