@@ -14,3 +14,4 @@
 - 2026-11-21: Stéphano landing pages wording: "حذاء واحد بـ330" and "جوج أحذية بـ590" in banner and order form (instead of زوج / جوج أزواج)
 - 2026-11-21: Added admin endpoint POST /api/admin/orders/remove to delete test orders by ref and subtract them from LP stats (visits/clicks kept)
 - 2026-11-21: Clean order product names — landing pages send "Stéphano Noir 42" (2 shoes: "Stéphano Noir 42 + Stéphano Marron 43"), no LP/x1/EU; removed "EU" before size in admin order list, Google Sheet and WhatsApp message; LP page of each order kept in LP stats (refs)
+- 2026-11-21: Replaced Stéphano landing Page 13 images with the new version from the Desktop folder (1440px q90)
