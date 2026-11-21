@@ -102,9 +102,31 @@ const CSS = `
     border:none; border-radius:14px; background:${GOLD}; color:#1a120a; font-family:'Tajawal',sans-serif;
     font-size:17px; font-weight:900; cursor:pointer; box-shadow:0 6px 24px rgba(200,162,122,.35); }
   @keyframes lpPulse { 0%,100% { transform:scale(1) } 50% { transform:scale(1.025) } }
-  .lp-banner { position:sticky; top:0; z-index:60; background:#c0392b; color:#fff; text-align:center;
-    padding:9px 10px; font-size:13.5px; font-weight:800; line-height:1.5; box-shadow:0 2px 10px rgba(0,0,0,.4); }
-  .lp-banner s { opacity:.75; font-weight:600; }
+  .lp-banner { position:sticky; top:0; z-index:60; overflow:hidden;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    background:linear-gradient(180deg,#1c140c 0%,#0b0805 100%); color:#f3ece4; text-align:center;
+    padding:9px 10px; font-size:13.5px; font-weight:700; line-height:1.55;
+    border-bottom:1px solid ${GOLD}; box-shadow:0 4px 18px rgba(0,0,0,.6); }
+  .lp-banner::after { content:''; position:absolute; top:0; bottom:0; width:40%; left:-50%;
+    background:linear-gradient(100deg,transparent,rgba(200,162,122,.16),transparent);
+    animation:lpShine 3.8s ease-in-out infinite; pointer-events:none; }
+  .lp-banner-txt { position:relative; z-index:1; }
+  .lp-banner b { color:${GOLD}; font-weight:900; letter-spacing:.2px; }
+  .lp-banner .lp-tag { color:${GOLD}; font-weight:900; font-size:14.5px; }
+  .lp-banner s { color:#8f8173; font-weight:600; }
+  .lp-flame { position:relative; z-index:1; display:inline-block; font-size:22px; line-height:1;
+    transform-origin:50% 90%; filter:drop-shadow(0 0 6px rgba(255,140,40,.75));
+    animation:lpFlicker 1.1s ease-in-out infinite alternate; }
+  .lp-flame.r { animation-delay:-.55s; animation-duration:1.25s; }
+  @keyframes lpFlicker {
+    0%   { transform:scale(1)    rotate(-3deg); filter:drop-shadow(0 0 5px rgba(255,140,40,.6)) brightness(1); }
+    25%  { transform:scale(1.12,1.18) rotate(2deg); filter:drop-shadow(0 0 10px rgba(255,170,60,.95)) brightness(1.15); }
+    50%  { transform:scale(.95,1.05) rotate(-2deg); filter:drop-shadow(0 0 6px rgba(255,120,30,.7)) brightness(.95); }
+    75%  { transform:scale(1.08,1.14) rotate(3deg); filter:drop-shadow(0 0 12px rgba(255,180,70,1)) brightness(1.2); }
+    100% { transform:scale(1,1.08) rotate(-1deg); filter:drop-shadow(0 0 7px rgba(255,150,50,.8)) brightness(1.05); }
+  }
+  @keyframes lpShine { 0% { left:-50% } 60%,100% { left:120% } }
+  @media (prefers-reduced-motion: reduce) { .lp-flame, .lp-banner::after { animation:none; } }
   .lp-old { display:block; font-size:12px; text-decoration:line-through; opacity:.6; font-weight:600; }
 `
 
@@ -239,9 +261,13 @@ export default function LandingStephano({ id }) {
         <div className="lp-wrap">
 
           <div className="lp-banner">
-            🔥 عرض محدود ابتداءً من اليوم {todayStr()}
-            <br />
-            زوج بـ330 درهم بدل <s>490</s> · جوج بـ590 درهم
+            <span className="lp-flame" aria-hidden="true">🔥</span>
+            <span className="lp-banner-txt">
+              <span className="lp-tag">عرض محدود</span> ابتداءً من اليوم {todayStr()}
+              <br />
+              زوج بـ<b>330 درهم</b> بدل <s>490</s> · جوج بـ<b>590 درهم</b>
+            </span>
+            <span className="lp-flame r" aria-hidden="true">🔥</span>
           </div>
 
           {imgs.map(([w, h], i) => (
