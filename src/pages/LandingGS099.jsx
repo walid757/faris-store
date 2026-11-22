@@ -42,7 +42,8 @@ const TXT = {
     eVille: 'كتب المدينة', eQuartier: 'اختار المقاطعة ديالك فكازا', eAdresse: 'دخل العنوان',
     eGen: 'وقع مشكل، عاود من فضلك',
     okTitle: <>شكراً! <span>الطلب ديالك توصلنا</span></>,
-    okSub: 'غادي نتاصلو بيك فأقرب وقت باش نأكدو الطلب', okRef: 'رقم الطلب:'
+    okSub: 'غادي نتاصلو بيك فأقرب وقت باش نأكدو الطلب', okRef: 'رقم الطلب:',
+    ticker: ['🚚 التوصيل مجاني', '💵 الدفع عند الاستلام', '📦 حل الكولي وقلّب قبل ما تخلص']
   },
   fr: {
     dir: 'ltr',
@@ -61,7 +62,8 @@ const TXT = {
     eVille: 'Entrez votre ville', eQuartier: 'Choisissez votre quartier à Casablanca', eAdresse: 'Entrez votre adresse',
     eGen: 'Une erreur est survenue, réessayez',
     okTitle: <>Merci ! <span>Commande reçue</span></>,
-    okSub: 'Nous vous appelons très vite pour confirmer la commande', okRef: 'N° de commande :'
+    okSub: 'Nous vous appelons très vite pour confirmer la commande', okRef: 'N° de commande :',
+    ticker: ['🚚 Livraison gratuite', '💵 Paiement à la livraison', '📦 Ouvrez le colis avant de payer']
   }
 }
 
@@ -167,6 +169,15 @@ const CSS = `
   }
   @keyframes gsShine { 0% { left:-50% } 60%,100% { left:120% } }
   @media (prefers-reduced-motion: reduce) { .gs-flame, .gs-banner::after, .gs-cta { animation:none; } }
+  .gs-ticker { position:sticky; top:0; z-index:60; overflow:hidden; white-space:nowrap;
+    background:${GOLD}; color:#1a120a; border-bottom:1px solid #8e6f4d; box-shadow:0 4px 14px rgba(0,0,0,.5); }
+  .gs-ticker .gs-track { display:inline-flex; gap:38px; padding:10px 0; font-weight:800; font-size:14px;
+    animation:gsTickR 16s linear infinite; }
+  .gs-ticker.ltr .gs-track { animation-name:gsTickL; }
+  .gs-ticker .gs-track span { display:inline-flex; align-items:center; gap:6px; }
+  @keyframes gsTickR { from { transform:translateX(0) } to { transform:translateX(50%) } }
+  @keyframes gsTickL { from { transform:translateX(0) } to { transform:translateX(-50%) } }
+  @media (prefers-reduced-motion: reduce) { .gs-ticker .gs-track { animation:none; } }
 `
 
 export default function LandingGS099({ lang, id }) {
@@ -297,14 +308,11 @@ export default function LandingGS099({ lang, id }) {
       <div className="gs" dir={T.dir}>
         <div className="gs-wrap">
 
-          <div className="gs-banner">
-            <span className="gs-flame" aria-hidden="true">🔥</span>
-            <span className="gs-banner-txt">
-              <span className="gs-tag">{T.tag}</span> {T.from} {todayStr()}
-              <br />
-              {T.one} {T.at}<b>{OFFERS[0].prix} {T.cur}</b> · {T.two} {T.at}<b>{OFFERS[1].prix} {T.cur}</b>
-            </span>
-            <span className="gs-flame r" aria-hidden="true">🔥</span>
+          {/* ticker banner: free delivery · pay on delivery · open the parcel (no prices) */}
+          <div className={'gs-ticker' + (T.dir === 'ltr' ? ' ltr' : '')} aria-label={T.ticker.join(' · ')}>
+            <div className="gs-track" aria-hidden="true">
+              {[0, 1, 2, 3].flatMap(k => T.ticker.map((t, i) => <span key={k + '-' + i}>{t}</span>))}
+            </div>
           </div>
 
           {imgs.map(([w, h], i) => (

@@ -17,3 +17,4 @@
 - 2026-11-21: Replaced Stéphano landing Page 13 images with the new version from the Desktop folder (1440px q90)
 - 2026-11-22: Landing pages form: phone accepted in any 06/07 format (+212, 00212, spaces, dashes, Arabic digits) and normalized to 0XXXXXXXXX; error shown next to the blocking field with red border + scroll; form errors counted per field per page (/api/lp/formerror) and shown in admin Test A/B (column "Erreurs formulaire")
 - 2026-11-22: Added GS099 landing pages A/B test: 7 Arabic (#gs/ar/01..07) + 7 French (#gs/fr/01..07) from Desktop folders Arabe/Français only (1440px q90), one link per language (#gs-ar, #gs-fr), offer 429 DH / 2 for 690 DH, colors Noir/Marron, sizes 39-44, campaign tracking /api/lp2/* (data/lp2_stats.json), admin tab "🧪 Test GS099"
+- 2026-11-22: GS099 landing pages (AR + FR): top banner replaced by a gold scrolling ticker without prices — free delivery · pay on delivery · open the parcel before paying (Stéphano banner unchanged)
