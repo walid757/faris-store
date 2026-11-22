@@ -417,7 +417,7 @@ app.post('/api/lp2/event', (req, res) => {
   if (type === 'order') {
     p.orders++
     p.pairs   += Number(qty) === 2 ? 2 : 1
-    p.revenue += [429, 690].includes(Number(prix)) ? Number(prix) : 0
+    p.revenue += [429, 690, 449, 730].includes(Number(prix)) ? Number(prix) : 0
     const t = Number(ms)
     if (t > 0 && t < 7 * 24 * 3600 * 1000) p.times.push(Math.round(t))
     if (ref) (p.refs = p.refs || []).push(String(ref).slice(0, 20))
@@ -540,7 +540,7 @@ app.post('/api/admin/orders/remove', adminAuth, (req, res) => {
         if (!(p.refs || []).includes(o.ref)) return
         p.refs    = p.refs.filter(r => r !== o.ref)
         p.orders  = Math.max(0, (p.orders || 0) - 1)
-        p.pairs   = Math.max(0, (p.pairs || 0) - (Number(o.prix) === 690 ? 2 : 1))
+        p.pairs   = Math.max(0, (p.pairs || 0) - ([690, 730].includes(Number(o.prix)) ? 2 : 1))
         p.revenue = Math.max(0, (p.revenue || 0) - (Number(o.prix) || 0))
       })
     })

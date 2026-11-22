@@ -10,7 +10,7 @@ export const GS_CAMPAIGN = { ar: 'gs099-ar', fr: 'gs099-fr' }
 const NAME    = 'GS099'
 const COLORS  = ['Noir', 'Marron']
 const SIZES   = [39, 40, 41, 42, 43, 44]
-const OFFERS  = [{ qty: 1, prix: 429 }, { qty: 2, prix: 690 }]
+const OFFERS  = [{ qty: 1, prix: 449 }, { qty: 2, prix: 730 }]
 
 // image sizes (width x height) — same layout for AR and FR
 const DIMS = {
@@ -206,7 +206,7 @@ export default function LandingGS099({ lang, id }) {
     const saved = ss.get('lp2_t0_' + key)
     if (saved) t0.current = parseInt(saved, 10)
     else { ss.set('lp2_t0_' + key, String(t0.current)); post('/api/lp2/event', { c, lp, type: 'visit' }) }
-    fbPixel('ViewContent', { content_name: `GS099 ${L.toUpperCase()} P${lp}`, value: 429, currency: 'MAD' })
+    fbPixel('ViewContent', { content_name: `GS099 ${L.toUpperCase()} P${lp}`, value: OFFERS[0].prix, currency: 'MAD' })
   }, [key])
 
   // form reached + hide sticky button while the form is visible
