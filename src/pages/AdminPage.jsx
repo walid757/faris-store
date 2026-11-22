@@ -5,6 +5,7 @@ import {
   getTheme, setTheme
 } from '../api/client.js'
 import LpStatsPanel from '../components/LpStatsPanel.jsx'
+import Lp2StatsPanel from '../components/Lp2StatsPanel.jsx'
 
 const AD = '#070c18'
 const AB = '#0b1525'
@@ -200,6 +201,14 @@ export default function AdminPage({ onBack, onThemeChange }) {
             border: tab === 'lp' ? `1px solid ${T}` : '1px solid transparent',
             borderRadius: 10, fontFamily: 'Inter,sans-serif', fontWeight: 600 }}>
           🧪 Test A/B
+        </button>
+        <button onClick={() => setTab('gs099')}
+          style={{ padding: '8px 14px', fontSize: 12, cursor: 'pointer',
+            background: tab === 'gs099' ? `linear-gradient(135deg,${T},#0d3d4a)` : 'transparent',
+            color: tab === 'gs099' ? 'white' : '#475569',
+            border: tab === 'gs099' ? `1px solid ${T}` : '1px solid transparent',
+            borderRadius: 10, fontFamily: 'Inter,sans-serif', fontWeight: 600 }}>
+          🧪 Test GS099
         </button>
       </div>
 
@@ -476,6 +485,14 @@ export default function AdminPage({ onBack, onThemeChange }) {
 
         {/* A/B TEST TAB */}
         {tab === 'lp' && <LpStatsPanel />}
+
+        {/* GS099 A/B TEST TAB (Arabic + French) */}
+        {tab === 'gs099' && (
+          <>
+            <Lp2StatsPanel campaign="gs099-ar" title="GS099 — Arabe (7 pages)" link="#gs-ar" base="#gs/ar/" />
+            <Lp2StatsPanel campaign="gs099-fr" title="GS099 — Français (7 pages)" link="#gs-fr" base="#gs/fr/" />
+          </>
+        )}
 
         {/* SETTINGS TAB */}
         {tab === 'settings' && (

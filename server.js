@@ -392,6 +392,110 @@ app.post('/api/lp/formerror', (req, res) => {
   res.json({ ok: true })
 })
 
+// ── CAMPAIGN LANDING PAGES (lp2): GS099 Arabic / French ──────
+// data/lp2_stats.json = { campaigns: { 'gs099-ar': { since, active: [...], pages: { '01': {...} } } } }
+const LP2_FILE = path.join(DATA_DIR, 'lp2_stats.json')
+const LP2_CAMPAIGNS = {
+  'gs099-ar': ['01', '02', '03', '04', '05', '06', '07'],
+  'gs099-fr': ['01', '02', '03', '04', '05', '06', '07']
+}
+if (!fs.existsSync(LP2_FILE)) writeJSON(LP2_FILE, { campaigns: {} })
+const lp2Read = () => readJSON(LP2_FILE, { campaigns: {} })
+const lp2Camp = (data, c) => {
+  if (!data.campaigns) data.campaigns = {}
+  return data.campaigns[c] || (data.campaigns[c] = { since: new Date().toISOString(), active: LP2_CAMPAIGNS[c].slice(), pages: {} })
+}
+const lp2Page = (camp, lp) => camp.pages[lp] || (camp.pages[lp] = newLpPage())
+const lp2Valid = (c, lp) => !!LP2_CAMPAIGNS[c] && LP2_CAMPAIGNS[c].includes(String(lp))
+
+app.post('/api/lp2/event', (req, res) => {
+  const { c, lp, type, ms, qty, prix, ref } = req.body || {}
+  if (!lp2Valid(c, lp) || !['visit', 'form', 'order'].includes(type)) return res.status(400).json({ error: 'invalid' })
+  const data = lp2Read(); const p = lp2Page(lp2Camp(data, c), String(lp))
+  if (type === 'visit') p.visits++
+  if (type === 'form')  p.forms++
+  if (type === 'order') {
+    p.orders++
+    p.pairs   += Number(qty) === 2 ? 2 : 1
+    p.revenue += [429, 690].includes(Number(prix)) ? Number(prix) : 0
+    const t = Number(ms)
+    if (t > 0 && t < 7 * 24 * 3600 * 1000) p.times.push(Math.round(t))
+    if (ref) (p.refs = p.refs || []).push(String(ref).slice(0, 20))
+  }
+  writeJSON(LP2_FILE, data)
+  res.json({ ok: true })
+})
+
+app.post('/api/lp2/stay', (req, res) => {
+  let body = req.body
+  if (typeof body === 'string') { try { body = JSON.parse(body) } catch { body = {} } }
+  const { c, lp, ms, first } = body || {}
+  const t = Math.round(Number(ms))
+  if (!lp2Valid(c, lp) || !(t > 0)) return res.status(400).json({ error: 'invalid' })
+  const data = lp2Read(); const p = lp2Page(lp2Camp(data, c), String(lp))
+  p.stay = (p.stay || 0) + Math.min(t, 30 * 60 * 1000)
+  if (first) p.staySessions = (p.staySessions || 0) + 1
+  writeJSON(LP2_FILE, data)
+  res.json({ ok: true })
+})
+
+app.post('/api/lp2/formerror', (req, res) => {
+  const c = String(req.body?.c || ''), lp = String(req.body?.lp || '')
+  const field = String(req.body?.field || '').replace(/\d+$/, '')
+  if (!lp2Valid(c, lp) || !LP_ERR_FIELDS.includes(field)) return res.status(400).json({ error: 'invalid' })
+  const data = lp2Read(); const p = lp2Page(lp2Camp(data, c), lp)
+  p.errors = p.errors || {}
+  p.errors[field] = (p.errors[field] || 0) + 1
+  writeJSON(LP2_FILE, data)
+  res.json({ ok: true })
+})
+
+app.get('/api/lp2/next', (req, res) => {
+  const c = String(req.query.c || '')
+  if (!LP2_CAMPAIGNS[c]) return res.status(400).json({ error: 'invalid' })
+  const data = lp2Read(); const camp = lp2Camp(data, c)
+  const pool = (camp.active || []).filter(id => LP2_CAMPAIGNS[c].includes(id))
+  const ids = pool.length ? pool : LP2_CAMPAIGNS[c]
+  if (ids.includes(String(req.query.keep))) return res.json({ lp: String(req.query.keep) })
+  const assigned = id => (camp.pages[id] && camp.pages[id].assigned) || 0
+  const min = Math.min(...ids.map(assigned))
+  const candidates = ids.filter(id => assigned(id) === min)
+  const lp = candidates[Math.floor(Math.random() * candidates.length)]
+  const p = lp2Page(camp, lp)
+  p.assigned = (p.assigned || 0) + 1
+  writeJSON(LP2_FILE, data)
+  res.json({ lp })
+})
+
+app.get('/api/admin/lp2-stats', adminAuth, (req, res) => {
+  const c = String(req.query.c || '')
+  if (!LP2_CAMPAIGNS[c]) return res.status(400).json({ error: 'invalid' })
+  const data = lp2Read(); const camp = lp2Camp(data, c)
+  res.json({ ...camp, ids: LP2_CAMPAIGNS[c] })
+})
+
+app.post('/api/admin/lp2-active', adminAuth, (req, res) => {
+  const c = String(req.body?.c || '')
+  if (!LP2_CAMPAIGNS[c]) return res.status(400).json({ error: 'invalid' })
+  const pages = Array.isArray(req.body?.active) ? req.body.active.map(String).filter(id => LP2_CAMPAIGNS[c].includes(id)) : []
+  if (!pages.length) return res.status(400).json({ error: 'Au moins une page active' })
+  const data = lp2Read(); const camp = lp2Camp(data, c)
+  camp.active = [...new Set(pages)].sort()
+  writeJSON(LP2_FILE, data)
+  console.log(`[LP2] ${c} active pages: ${camp.active.join(',')}`)
+  res.json({ success: true, active: camp.active })
+})
+
+app.post('/api/admin/lp2-stats/reset', adminAuth, (req, res) => {
+  const c = String(req.body?.c || '')
+  if (!LP2_CAMPAIGNS[c]) return res.status(400).json({ error: 'invalid' })
+  const data = lp2Read(); const camp = lp2Camp(data, c)
+  data.campaigns[c] = { since: new Date().toISOString(), active: camp.active, pages: {} }
+  writeJSON(LP2_FILE, data)
+  console.log(`[LP2] ${c} stats reset`)
+  res.json({ success: true })
+})
+
 // ── REMOVE TEST ORDERS (by ref) + subtract them from LP stats ──
 // body: { refs: ['FAR-xxxxxx'], lpTimes: { '07': [ms, ...] } }  (lpTimes optional)
 app.post('/api/admin/orders/remove', adminAuth, (req, res) => {
@@ -427,6 +531,21 @@ app.post('/api/admin/orders/remove', adminAuth, (req, res) => {
     })
   })
   writeJSON(LP_FILE, data)
+
+  // campaign pages (GS099...): find the page by ref and subtract the order
+  const data2 = lp2Read()
+  removed.forEach(o => {
+    Object.values(data2.campaigns || {}).forEach(camp => {
+      Object.values(camp.pages || {}).forEach(p => {
+        if (!(p.refs || []).includes(o.ref)) return
+        p.refs    = p.refs.filter(r => r !== o.ref)
+        p.orders  = Math.max(0, (p.orders || 0) - 1)
+        p.pairs   = Math.max(0, (p.pairs || 0) - (Number(o.prix) === 690 ? 2 : 1))
+        p.revenue = Math.max(0, (p.revenue || 0) - (Number(o.prix) || 0))
+      })
+    })
+  })
+  writeJSON(LP2_FILE, data2)
   console.log(`[ORDERS] Removed test orders: ${removed.map(o => o.ref).join(', ')}`)
   res.json({ success: true, removed: removed.map(o => o.ref) })
 })

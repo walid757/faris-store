@@ -9,6 +9,8 @@ import ThemeStory  from './themes/ThemeStory.jsx'
 import ThemeFassi  from './themes/ThemeFassi.jsx'
 import LandingStephano from './pages/LandingStephano.jsx'
 import LpRotator from './pages/LpRotator.jsx'
+import LandingGS099, { GS_CAMPAIGN, GS_PAGE_IDS } from './pages/LandingGS099.jsx'
+import LpRotator2 from './pages/LpRotator2.jsx'
 
 // ── SIMPLE ROUTER ─────────────────────────────────────────────
 const getPage = () => {
@@ -17,6 +19,8 @@ const getPage = () => {
   if (hash.startsWith('#produit')) return 'product'
   if (hash.startsWith('#lp/'))     return 'lp'
   if (hash === '#test')            return 'lptest'
+  if (hash.startsWith('#gs/'))     return 'gs'
+  if (hash === '#gs-ar' || hash === '#gs-fr') return 'gsrot'
   return 'home'
 }
 
@@ -63,6 +67,16 @@ export default function App() {
   if (page === 'admin') return <><FontLoader/><AdminPage onBack={nav.home} onThemeChange={setTheme} /></>
 
   if (page === 'lptest') return <LpRotator />
+
+  if (page === 'gsrot') {
+    const gl = window.location.hash === '#gs-fr' ? 'fr' : 'ar'
+    return <LpRotator2 key={gl} campaign={GS_CAMPAIGN[gl]} base={'#gs/' + gl + '/'} ids={GS_PAGE_IDS} />
+  }
+
+  if (page === 'gs') {
+    const [, gl, gid] = window.location.hash.split('/')
+    return <LandingGS099 key={gl + gid} lang={gl} id={(gid || '').slice(0, 2)} />
+  }
 
   if (page === 'lp') return <LandingStephano id={window.location.hash.replace('#lp/', '').slice(0, 2)} />
 
