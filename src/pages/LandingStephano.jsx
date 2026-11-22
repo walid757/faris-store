@@ -27,6 +27,28 @@ const isCasa = v => {
   return /^(casa|casablanca|casa blanca|kaza|kasa|dar el beida|dar beida)\b/.test(s) ||
     /^(كازا|كازابلانكا|كازا بلانكا|الدار البيضاء|الدارالبيضاء|البيضاء|الدار البيضا|البيضا)/.test(s)
 }
+// Phone: accept 06/07 in any form (+212 6.., 00212 7.., spaces, dashes, Arabic digits) → 0612345678
+const normalizePhone = v => {
+  let s = String(v || '')
+    .replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x06F0))
+    .replace(/[^\d+]/g, '')
+  if (s.startsWith('+')) s = s.slice(1)
+  if (s.startsWith('00212')) s = '0' + s.slice(5)
+  else if (s.startsWith('212')) s = '0' + s.slice(3)
+  if (s.startsWith('00')) s = s.slice(1)
+  if (/^[67]\d{8}$/.test(s)) s = '0' + s
+  return s
+}
+
+// form errors (field only, no customer data) → admin, to see where visitors get stuck
+const lpFormError = (lp, field) =>
+  fetch('/api/lp/formerror', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lp, field })
+  }).catch(() => {})
+
 const todayStr = () => {
   const d = new Date()
   return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear()
@@ -95,6 +117,9 @@ const CSS = `
     animation: lpPulse 1.8s infinite; }
   .lp-cta:disabled { opacity:.6; animation:none; }
   .lp-err { margin-top:10px; color:#ff8a7a; font-size:13px; text-align:center; font-weight:700; }
+  .lp-in.bad, .lp-chips.bad { border-color:#ff6b5a !important; box-shadow:0 0 0 2px rgba(255,107,90,.25); }
+  .lp-chips.bad { border:1.5px solid #ff6b5a; border-radius:12px; padding:6px; }
+  .lp-ferr { color:#ff8a7a; font-size:12.5px; font-weight:700; margin-top:5px; }
   .lp-trust { display:flex; justify-content:space-around; margin-top:14px; font-size:11px; color:#a8998a; text-align:center; }
   .lp-sticky { position:fixed; bottom:0; left:0; right:0; z-index:50; padding:10px 12px;
     background:linear-gradient(to top, #000 70%, rgba(0,0,0,0)); }
@@ -152,6 +177,7 @@ export default function LandingStephano({ id }) {
   const [form,    setForm]    = useState({ nom: '', tel: '', adresse: '', ville: '' })
   const [quartier, setQuartier] = useState('')
   const [error,   setError]   = useState('')
+  const [errField, setErrField] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(null)
   const [showSticky, setShowSticky] = useState(true)
@@ -222,14 +248,28 @@ export default function LandingStephano({ id }) {
   const o = OFFERS[offer]
   const used = pairs.slice(0, o.qty)
 
+  // show the error next to the field, scroll to it, and count it for the admin
+  const fail = (field, msg) => {
+    setError(msg); setErrField(field)
+    lpFormError(lp, field)
+    setTimeout(() => {
+      const el = document.getElementById('lp-f-' + field)
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (el.focus && el.tagName !== 'DIV') el.focus() }
+    }, 30)
+  }
+  const ferr = f => errField === f && error ? <div className="lp-ferr">⚠️ {error}</div> : null
+
   const submit = async () => {
-    if (used.some(p => !p.taille))       return setError('اختار المقاس')
-    if (!form.nom.trim())                return setError('دخل الاسم الكامل')
-    if (!/^0[67]\d{8}$/.test(form.tel))  return setError('رقم الهاتف ماشي صحيح (06XXXXXXXX)')
-    if (!form.ville.trim())              return setError('كتب المدينة')
-    if (isCasa(form.ville) && !quartier) return setError('اختار المقاطعة ديالك فكازا')
-    if (!form.adresse.trim())            return setError('دخل العنوان')
-    setError(''); setLoading(true)
+    const tel = normalizePhone(form.tel)
+    if (tel !== form.tel) setForm(f => ({ ...f, tel }))
+    const noSize = used.findIndex(p => !p.taille)
+    if (noSize !== -1)                   return fail('taille' + noSize, 'اختار المقاس')
+    if (!form.nom.trim())                return fail('nom', 'دخل الاسم الكامل')
+    if (!/^0[67]\d{8}$/.test(tel))       return fail('tel', 'رقم الهاتف خاصو يكون 06 ولا 07 + 8 أرقام')
+    if (!form.ville.trim())              return fail('ville', 'كتب المدينة')
+    if (isCasa(form.ville) && !quartier) return fail('quartier', 'اختار المقاطعة ديالك فكازا')
+    if (!form.adresse.trim())            return fail('adresse', 'دخل العنوان')
+    setError(''); setErrField(''); setLoading(true)
     try {
       // order reads cleanly: "Stéphano Noir 42" / "Stéphano Noir 42 + Stéphano Marron 43"
       // (admin / sheet / WhatsApp append couleur + taille after produit)
@@ -238,13 +278,17 @@ export default function LandingStephano({ id }) {
       const before = used.slice(0, -1).map(p => `${P.nom.fr} ${short(p.couleur)} ${p.taille} + `).join('')
       const ville = isCasa(form.ville) ? `Casablanca - ${quartier}` : form.ville.trim()
       const res = await createOrder({
-        ...form, ville,
+        ...form, tel, ville,
         couleur: short(last.couleur),
         taille:  last.taille,
         produit: `${before}${P.nom.fr}`,
         prix: o.prix, langue: 'ar'
       })
-      if (!res || !res.success) { setError(res?.error || 'وقع مشكل، عاود من فضلك'); return }
+      if (!res || !res.success) {
+        lpFormError(lp, 'server_' + (res?.field || 'other'))
+        if (res?.field) return fail(res.field, res.error || 'وقع مشكل، عاود من فضلك')
+        setError(res?.error || 'وقع مشكل، عاود من فضلك'); return
+      }
       const ms = Date.now() - t0.current
       if (!ss.get('lp_order_' + lp + '_' + res.ref)) {
         ss.set('lp_order_' + lp + '_' + res.ref, '1')
@@ -254,6 +298,7 @@ export default function LandingStephano({ id }) {
       setSuccess(res)
       setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50)
     } catch (e) {
+      lpFormError(lp, 'network')
       setError('وقع مشكل، عاود من فضلك')
     } finally { setLoading(false) }
   }
@@ -322,34 +367,44 @@ export default function LandingStephano({ id }) {
                         ))}
                       </div>
                       <div className="lp-lbl">المقاس</div>
-                      <div className="lp-chips">
+                      <div id={'lp-f-taille' + i} className={'lp-chips' + (errField === 'taille' + i ? ' bad' : '')}>
                         {P.tailles.map(t => (
                           <button key={t} className={'lp-chip' + (p.taille === String(t) ? ' on' : '')}
-                            onClick={() => setPair(i, 'taille', String(t))}>{t}</button>
+                            onClick={() => { setPair(i, 'taille', String(t)); if (errField === 'taille' + i) { setErrField(''); setError('') } }}>{t}</button>
                         ))}
                       </div>
+                      {ferr('taille' + i)}
                     </div>
                   ))}
 
-                  <input className="lp-in" placeholder="الاسم الكامل" value={form.nom} onChange={set('nom')} />
-                  <input className="lp-in" placeholder="رقم الهاتف" inputMode="tel" maxLength={10}
-                    value={form.tel} onChange={set('tel')} />
-                  <input className="lp-in" placeholder="المدينة" value={form.ville}
+                  <input id="lp-f-nom" className={'lp-in' + (errField === 'nom' ? ' bad' : '')} placeholder="الاسم الكامل"
+                    value={form.nom} onChange={set('nom')} autoComplete="name" />
+                  {ferr('nom')}
+                  <input id="lp-f-tel" className={'lp-in' + (errField === 'tel' ? ' bad' : '')} placeholder="رقم الهاتف (06 / 07)"
+                    inputMode="tel" type="tel" autoComplete="tel" maxLength={20}
+                    value={form.tel} onChange={set('tel')}
+                    onBlur={() => setForm(f => ({ ...f, tel: normalizePhone(f.tel) }))} />
+                  {ferr('tel')}
+                  <input id="lp-f-ville" className={'lp-in' + (errField === 'ville' ? ' bad' : '')} placeholder="المدينة" value={form.ville}
                     onChange={e => { set('ville')(e); if (!isCasa(e.target.value)) setQuartier('') }} />
+                  {ferr('ville')}
                   {isCasa(form.ville) && (
-                    <select className="lp-in" value={quartier} onChange={e => setQuartier(e.target.value)}
+                    <select id="lp-f-quartier" className={'lp-in' + (errField === 'quartier' ? ' bad' : '')} value={quartier} onChange={e => setQuartier(e.target.value)}
                       style={{ borderColor: quartier ? LINE : GOLD }}>
                       <option value="">— اختار المقاطعة —</option>
                       {CASA_QUARTIERS.map(q => <option key={q} value={q}>{q}</option>)}
                       <option value="Autre">حي آخر</option>
                     </select>
                   )}
-                  <input className="lp-in" placeholder="العنوان" value={form.adresse} onChange={set('adresse')} />
+                  {isCasa(form.ville) && ferr('quartier')}
+                  <input id="lp-f-adresse" className={'lp-in' + (errField === 'adresse' ? ' bad' : '')} placeholder="العنوان"
+                    value={form.adresse} onChange={set('adresse')} autoComplete="street-address" />
+                  {ferr('adresse')}
 
                   <button className="lp-cta" onClick={submit} disabled={loading}>
                     {loading ? '...' : `أكد الطلب — ${o.prix} درهم`}
                   </button>
-                  {error && <div className="lp-err">{error}</div>}
+                  {error && !errField && <div className="lp-err">{error}</div>}
 
                   <div className="lp-trust">
                     <span>🚚<br/>توصيل سريع</span>

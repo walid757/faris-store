@@ -19,6 +19,12 @@ const fmtTime = ms => {
 }
 const pct = (a, b) => b ? (a / b * 100) : 0
 
+const ERR_LABEL = {
+  taille: 'Taille', nom: 'Nom', tel: 'Téléphone', ville: 'Ville', quartier: 'Quartier Casa',
+  adresse: 'Adresse', network: 'Réseau', server_tel: 'Tél (serveur)', server_nom: 'Nom (serveur)',
+  server_adresse: 'Adresse (serveur)', server_ville: 'Ville (serveur)', server_other: 'Serveur/limite'
+}
+
 export default function LpStatsPanel() {
   const [data, setData]     = useState(null)
   const [sort, setSort]     = useState('cr')
@@ -74,6 +80,7 @@ export default function LpStatsPanel() {
       formRate: pct(p.forms || 0, p.visits || 0),
       median,
       stay: p.staySessions ? (p.stay || 0) / p.staySessions : null,
+      errors: p.errors || {},
       on: !active || active.includes(id)
     }
   })
@@ -160,7 +167,7 @@ export default function LpStatsPanel() {
           <thead>
             <tr>
               <th style={th}>Page</th><th style={th}>Visites</th><th style={th}>Ont vu le formulaire</th>
-              <th style={th}>Commandes</th><th style={th}>Conversion</th><th style={th}>Temps médian → commande</th><th style={th}>Temps moyen sur la page</th>
+              <th style={th}>Commandes</th><th style={th}>Conversion</th><th style={th}>Temps médian → commande</th><th style={th}>Temps moyen sur la page</th><th style={th}>Erreurs formulaire</th>
               <th style={th}>Paires</th><th style={th}>CA (MAD)</th><th style={th}>Lien pub</th>
             </tr>
           </thead>
@@ -182,6 +189,11 @@ export default function LpStatsPanel() {
                   </td>
                   <td style={td}>{fmtTime(r.median)}</td>
                   <td style={td}>{fmtTime(r.stay)}</td>
+                  <td style={{ ...td, fontSize: 10, color: Object.keys(r.errors).length ? '#fca5a5' : '#475569' }}>
+                    {Object.keys(r.errors).length
+                      ? Object.entries(r.errors).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${ERR_LABEL[k] || k}: ${n}`).join(' · ')
+                      : '—'}
+                  </td>
                   <td style={td}>{r.pairs}</td>
                   <td style={td}>{r.revenue}</td>
                   <td style={td}>
@@ -202,6 +214,7 @@ export default function LpStatsPanel() {
         Le temps est mesuré entre l'arrivée sur la page et la commande.
         Temps moyen sur la page = temps passé (page visible) par visiteur.
         Les pages désactivées (grisées) ne reçoivent plus de visiteurs via le lien unique.
+        Erreurs formulaire = clics sur "أكد الطلب" bloqués, par champ (aucune donnée client enregistrée).
       </div>
     </div>
   )

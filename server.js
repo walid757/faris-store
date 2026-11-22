@@ -377,6 +377,21 @@ app.post('/api/admin/lp-active', adminAuth, (req, res) => {
   res.json({ success: true, active })
 })
 
+// ── LP FORM ERRORS: which field blocks visitors (no customer data stored) ──
+const LP_ERR_FIELDS = ['taille', 'nom', 'tel', 'ville', 'quartier', 'adresse', 'network',
+  'server_nom', 'server_tel', 'server_adresse', 'server_ville', 'server_other']
+app.post('/api/lp/formerror', (req, res) => {
+  const lp = String(req.body?.lp || '')
+  const field = String(req.body?.field || '').replace(/\d+$/, '')
+  if (!LP_ID.test(lp) || !LP_ERR_FIELDS.includes(field)) return res.status(400).json({ error: 'invalid' })
+  const data = readJSON(LP_FILE, { since: new Date().toISOString(), pages: {} })
+  const p = data.pages[lp] || (data.pages[lp] = newLpPage())
+  p.errors = p.errors || {}
+  p.errors[field] = (p.errors[field] || 0) + 1
+  writeJSON(LP_FILE, data)
+  res.json({ ok: true })
+})
+
 // ── REMOVE TEST ORDERS (by ref) + subtract them from LP stats ──
 // body: { refs: ['FAR-xxxxxx'], lpTimes: { '07': [ms, ...] } }  (lpTimes optional)
 app.post('/api/admin/orders/remove', adminAuth, (req, res) => {
