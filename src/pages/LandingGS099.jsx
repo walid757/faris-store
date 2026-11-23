@@ -10,7 +10,7 @@ export const GS_CAMPAIGN = { ar: 'gs099-ar', fr: 'gs099-fr' }
 const NAME    = 'GS099'
 const COLORS  = ['Noir', 'Marron']
 const SIZES   = [39, 40, 41, 42, 43, 44]
-const OFFERS  = [{ qty: 1, prix: 619 }, { qty: 2, prix: 990 }]
+const OFFERS  = [{ qty: 1, prix: 429 }, { qty: 2, prix: 690 }]
 
 // image sizes (width x height) — same layout for AR and FR
 const DIMS = {
@@ -29,7 +29,7 @@ const TXT = {
     dir: 'rtl',
     tag: 'عرض محدود', from: 'ابتداءً من اليوم',
     one: 'حذاء واحد', two: 'جوج أحذية', cur: 'درهم', at: 'بـ',
-    save: 'وفر 248 درهم',
+    save: 'وفر 168 درهم',
     title: <>اطلب <span>GS099</span> دابا</>,
     sub: 'الدفع عند الاستلام · التوصيل لجميع المدن',
     color: 'اللون', size: 'المقاس', shoe: i => 'الحذاء ' + (i === 0 ? 'الأول' : 'الثاني'),
@@ -49,7 +49,7 @@ const TXT = {
     dir: 'ltr',
     tag: 'Offre limitée', from: "à partir d'aujourd'hui",
     one: '1 paire', two: '2 paires', cur: 'DH', at: 'à ',
-    save: 'Économisez 248 DH',
+    save: 'Économisez 168 DH',
     title: <>Commandez <span>GS099</span> maintenant</>,
     sub: 'Paiement à la livraison · Livraison partout au Maroc',
     color: 'Couleur', size: 'Pointure', shoe: i => (i === 0 ? '1ʳᵉ' : '2ᵉ') + ' paire',

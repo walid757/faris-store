@@ -21,3 +21,4 @@
 - 2026-11-22: GS099 price changed to 449 DH (1 pair) / 730 DH (2 pairs), saving stays 168 DH; server LP2 revenue accepts new prices
 - 2026-11-23: GS099 price changed to 619 DH (1 pair) / 990 DH (2 pairs), saving label 248 DH; server LP2 revenue accepts new prices
 - 2026-11-23: Stéphano landing pages price changed to 420 DH (1 pair, old 490) / 670 DH (2 pairs, old 980), saving label 170 DH; banner reads prices from OFFERS; server LP revenue accepts new prices
+- 2026-11-23: GS099 price reverted to 429 DH (1 pair) / 690 DH (2 pairs), saving label 168 DH
