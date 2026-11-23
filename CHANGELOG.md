@@ -19,3 +19,4 @@
 - 2026-11-22: Added GS099 landing pages A/B test: 7 Arabic (#gs/ar/01..07) + 7 French (#gs/fr/01..07) from Desktop folders Arabe/Français only (1440px q90), one link per language (#gs-ar, #gs-fr), offer 429 DH / 2 for 690 DH, colors Noir/Marron, sizes 39-44, campaign tracking /api/lp2/* (data/lp2_stats.json), admin tab "🧪 Test GS099"
 - 2026-11-22: GS099 landing pages (AR + FR): top banner replaced by a gold scrolling ticker without prices — free delivery · pay on delivery · open the parcel before paying (Stéphano banner unchanged)
 - 2026-11-22: GS099 price changed to 449 DH (1 pair) / 730 DH (2 pairs), saving stays 168 DH; server LP2 revenue accepts new prices
+- 2026-11-23: GS099 price changed to 619 DH (1 pair) / 990 DH (2 pairs), saving label 248 DH; server LP2 revenue accepts new prices
