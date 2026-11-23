@@ -58,3 +58,4 @@ Never install a new npm package without asking me first.- Session 2026-11-20 —
 - 2026-11-22 later — GS099: top banner = gold scrolling ticker without prices (free delivery · COD · open parcel); price now 449 / 730 DH (saving 168). Stephano unchanged (330/590, flame banner).
 - 2026-11-23 — GS099 price now 619 / 990 DH (saving 248). User sometimes says GS096/GS093/JS092 but means GS099 (only model with campaign pages). Stephano campaign paused (12 orders / 396 visits; best pages 05, 09, 13); proposed plan (keep 05/09/13, add InitiateCheckout pixel, reset stats, retargeting) awaiting user decision.
 - 2026-11-23 — Stephano landing price now 420 (old 490) / 670 (old 980), saving 170. Pages 11-14 images still show 330/590 — asked user to replace images or turn pages off.
+- 2026-11-23 later — GS099 price reverted to 429 / 690 DH (saving 168).
