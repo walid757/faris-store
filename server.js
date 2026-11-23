@@ -308,7 +308,7 @@ app.post('/api/lp/event', (req, res) => {
   if (type === 'order') {
     p.orders++
     p.pairs   += Number(qty) === 2 ? 2 : 1
-    p.revenue += [330, 590].includes(Number(prix)) ? Number(prix) : 0
+    p.revenue += [330, 590, 420, 670].includes(Number(prix)) ? Number(prix) : 0
     const t = Number(ms)
     if (t > 0 && t < 7 * 24 * 3600 * 1000) p.times.push(Math.round(t))
     if (req.body.ref) (p.refs = p.refs || []).push(String(req.body.ref).slice(0, 20))
@@ -514,7 +514,7 @@ app.post('/api/admin/orders/remove', adminAuth, (req, res) => {
     const m = /LP(\d{2}) x(\d)/.exec(o.produit || '')
     const lpId = m ? m[1] : Object.keys(data.pages).find(k => (data.pages[k].refs || []).includes(o.ref))
     if (!lpId || !data.pages[lpId]) return
-    const qty = m ? Number(m[2]) : (Number(o.prix) === 590 ? 2 : 1)
+    const qty = m ? Number(m[2]) : ([590, 670].includes(Number(o.prix)) ? 2 : 1)
     const p = data.pages[lpId]
     if (p.refs) p.refs = p.refs.filter(r => r !== o.ref)
     p.orders  = Math.max(0, (p.orders || 0) - 1)

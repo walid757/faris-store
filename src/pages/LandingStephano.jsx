@@ -9,8 +9,8 @@ import { createOrder, fbPixel } from '../api/client.js'
 const P = PRODUCTS.find(p => p.slug === 'stephano') || PRODUCTS[0]
 
 const OFFERS = [
-  { qty: 1, prix: 330, old: 490, label: 'حذاء واحد' },
-  { qty: 2, prix: 590, old: 980, label: 'جوج أحذية', save: 'وفر 70 درهم' }
+  { qty: 1, prix: 420, old: 490, label: 'حذاء واحد' },
+  { qty: 2, prix: 670, old: 980, label: 'جوج أحذية', save: 'وفر 170 درهم' }
 ]
 
 // Casablanca: visitor types the city; if it's Casa we ask for the district
@@ -194,7 +194,7 @@ export default function LandingStephano({ id }) {
       ss.set(k, String(t0.current))
       lpEvent(lp, 'visit')
     }
-    fbPixel('ViewContent', { content_name: 'Stephano LP' + lp, value: 330, currency: 'MAD' })
+    fbPixel('ViewContent', { content_name: 'Stephano LP' + lp, value: OFFERS[0].prix, currency: 'MAD' })
   }, [lp])
 
   // form reached (once per session) + hide sticky button when form is visible
@@ -314,7 +314,7 @@ export default function LandingStephano({ id }) {
             <span className="lp-banner-txt">
               <span className="lp-tag">عرض محدود</span> ابتداءً من اليوم {todayStr()}
               <br />
-              حذاء واحد بـ<b>330 درهم</b> بدل <s>490</s> · جوج أحذية بـ<b>590 درهم</b>
+              حذاء واحد بـ<b>{OFFERS[0].prix} درهم</b> بدل <s>{OFFERS[0].old}</s> · جوج أحذية بـ<b>{OFFERS[1].prix} درهم</b>
             </span>
             <span className="lp-flame r" aria-hidden="true">🔥</span>
           </div>
