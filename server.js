@@ -397,7 +397,8 @@ app.post('/api/lp/formerror', (req, res) => {
 const LP2_FILE = path.join(DATA_DIR, 'lp2_stats.json')
 const LP2_CAMPAIGNS = {
   'gs099-ar': ['01', '02', '03', '04', '05', '06', '07'],
-  'gs099-fr': ['01', '02', '03', '04', '05', '06', '07']
+  'gs099-fr': ['01', '02', '03', '04', '05', '06', '07'],
+  'gs099-mix': ['DA1', 'DA2', 'DA3', 'DA4', 'FU1', 'FU2', 'FU3', 'FU4']
 }
 if (!fs.existsSync(LP2_FILE)) writeJSON(LP2_FILE, { campaigns: {} })
 const lp2Read = () => readJSON(LP2_FILE, { campaigns: {} })

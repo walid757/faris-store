@@ -9,7 +9,7 @@ import ThemeStory  from './themes/ThemeStory.jsx'
 import ThemeFassi  from './themes/ThemeFassi.jsx'
 import LandingStephano from './pages/LandingStephano.jsx'
 import LpRotator from './pages/LpRotator.jsx'
-import LandingGS099, { GS_CAMPAIGN, GS_PAGE_IDS } from './pages/LandingGS099.jsx'
+import LandingGS099, { GS_CAMPAIGN, GS_PAGE_IDS, GS_MIX } from './pages/LandingGS099.jsx'
 import LpRotator2 from './pages/LpRotator2.jsx'
 
 // ── SIMPLE ROUTER ─────────────────────────────────────────────
@@ -21,6 +21,8 @@ const getPage = () => {
   if (hash === '#test')            return 'lptest'
   if (hash.startsWith('#gs/'))     return 'gs'
   if (hash === '#gs-ar' || hash === '#gs-fr') return 'gsrot'
+  if (hash === '#gs099')           return 'gsmixrot'
+  if (hash.startsWith('#gsm/'))    return 'gsmix'
   return 'home'
 }
 
@@ -71,6 +73,13 @@ export default function App() {
   if (page === 'gsrot') {
     const gl = window.location.hash === '#gs-fr' ? 'fr' : 'ar'
     return <LpRotator2 key={gl} campaign={GS_CAMPAIGN[gl]} base={'#gs/' + gl + '/'} ids={GS_PAGE_IDS} />
+  }
+
+  if (page === 'gsmixrot') return <LpRotator2 key="mix" campaign={GS_MIX.campaign} base="#gsm/" ids={GS_MIX.ids} />
+
+  if (page === 'gsmix') {
+    const gid = window.location.hash.replace('#gsm/', '').slice(0, 3)
+    return <LandingGS099 key={'mix' + gid} set="mix" id={gid} />
   }
 
   if (page === 'gs') {

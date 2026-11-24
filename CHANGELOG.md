@@ -22,3 +22,4 @@
 - 2026-11-23: GS099 price changed to 619 DH (1 pair) / 990 DH (2 pairs), saving label 248 DH; server LP2 revenue accepts new prices
 - 2026-11-23: Stéphano landing pages price changed to 420 DH (1 pair, old 490) / 670 DH (2 pairs, old 980), saving label 170 DH; banner reads prices from OFFERS; server LP revenue accepts new prices
 - 2026-11-23: GS099 price reverted to 429 DH (1 pair) / 690 DH (2 pairs), saving label 168 DH
+- 2026-11-24: Added GS099 new pages 24-11 A/B test: 4 Darija (DA1-4) + 4 Fousha (FU1-4) from Desktop folder "GS099 pages 24-11" (1440px q90), one link #gs099 rotating all 8 (#gsm/<id>), campaign gs099-mix, price 429 / 690, third table in admin tab "Test GS099"; existing #gs-ar / #gs-fr / #test unchanged

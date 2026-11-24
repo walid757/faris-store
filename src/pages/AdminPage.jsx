@@ -491,6 +491,7 @@ export default function AdminPage({ onBack, onThemeChange }) {
           <>
             <Lp2StatsPanel campaign="gs099-ar" title="GS099 — Arabe (7 pages)" link="#gs-ar" base="#gs/ar/" />
             <Lp2StatsPanel campaign="gs099-fr" title="GS099 — Français (7 pages)" link="#gs-fr" base="#gs/fr/" />
+            <Lp2StatsPanel campaign="gs099-mix" title="GS099 — Nouvelles pages 24-11 (4 Darija + 4 Fousha)" link="#gs099" base="#gsm/" />
           </>
         )}
 

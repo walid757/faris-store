@@ -24,6 +24,20 @@ const DIMS = {
 }
 export const GS_PAGE_IDS = Object.keys(DIMS)
 
+// ── NEW SET 24-11: 4 Darija (DA1-4) + 4 Fousha (FU1-4), one link #gs099 ──
+// Images: public/products/gs099/mix/<id>/<n>.jpg · form in Arabic
+const MIX_DIMS = {
+  DA1: [[1440,2240],[1440,2373],[1440,2240],[1440,2240],[1440,2240]],
+  DA2: [[1440,2240],[1440,2373],[1440,2527],[1440,2527],[1440,2671]],
+  DA3: [[1440,2240],[1440,2373],[1440,2240],[1440,2527],[1440,2527]],
+  DA4: [[1440,3031],[1440,2373],[1440,2240],[1440,2600],[1440,2613]],
+  FU1: [[1440,2240],[1440,2373],[1440,2240],[1440,2240],[1440,2240]],
+  FU2: [[1440,2240],[1440,2373],[1440,2527],[1440,2527],[1440,2671]],
+  FU3: [[1440,2240],[1440,2373],[1440,2240],[1440,2527],[1440,2527]],
+  FU4: [[1440,3031],[1440,2373],[1440,2240],[1440,2600],[1440,2613]]
+}
+export const GS_MIX = { campaign: 'gs099-mix', ids: Object.keys(MIX_DIMS) }
+
 const TXT = {
   ar: {
     dir: 'rtl',
@@ -180,13 +194,17 @@ const CSS = `
   @media (prefers-reduced-motion: reduce) { .gs-ticker .gs-track { animation:none; } }
 `
 
-export default function LandingGS099({ lang, id }) {
-  const L    = lang === 'fr' ? 'fr' : 'ar'
+export default function LandingGS099({ lang, id, set: pageSet }) {
+  const mix  = pageSet === 'mix'
+  const L    = mix ? 'ar' : (lang === 'fr' ? 'fr' : 'ar')
   const T    = TXT[L]
-  const c    = GS_CAMPAIGN[L]
-  const lp   = DIMS[id] ? id : '01'
-  const imgs = DIMS[lp]
+  const c    = mix ? GS_MIX.campaign : GS_CAMPAIGN[L]
+  const dims = mix ? MIX_DIMS : DIMS
+  const lp   = dims[id] ? id : Object.keys(dims)[0]
+  const imgs = dims[lp]
   const key  = c + '_' + lp
+  const imgBase = mix ? `/products/gs099/mix/${lp}/` : `/products/gs099/${L}/${lp}/`
+  const pxName  = mix ? `GS099 MIX ${lp}` : `GS099 ${L.toUpperCase()} P${lp}`
 
   const [offer,    setOffer]    = useState(0)
   const [pairs,    setPairs]    = useState([{ couleur: COLORS[0], taille: '' }, { couleur: COLORS[0], taille: '' }])
@@ -206,7 +224,7 @@ export default function LandingGS099({ lang, id }) {
     const saved = ss.get('lp2_t0_' + key)
     if (saved) t0.current = parseInt(saved, 10)
     else { ss.set('lp2_t0_' + key, String(t0.current)); post('/api/lp2/event', { c, lp, type: 'visit' }) }
-    fbPixel('ViewContent', { content_name: `GS099 ${L.toUpperCase()} P${lp}`, value: OFFERS[0].prix, currency: 'MAD' })
+    fbPixel('ViewContent', { content_name: pxName, value: OFFERS[0].prix, currency: 'MAD' })
   }, [key])
 
   // form reached + hide sticky button while the form is visible
@@ -293,7 +311,7 @@ export default function LandingGS099({ lang, id }) {
         ss.set('lp2_order_' + key + '_' + res.ref, '1')
         post('/api/lp2/event', { c, lp, type: 'order', ms, qty: o.qty, prix: o.prix, ref: res.ref })
       }
-      fbPixel('Purchase', { value: o.prix, currency: 'MAD', content_name: `GS099 ${L.toUpperCase()} P${lp}`, num_items: o.qty })
+      fbPixel('Purchase', { value: o.prix, currency: 'MAD', content_name: pxName, num_items: o.qty })
       setSuccess(res)
       setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50)
     } catch (e) {
@@ -316,7 +334,7 @@ export default function LandingGS099({ lang, id }) {
           </div>
 
           {imgs.map(([w, h], i) => (
-            <img key={i} className="gs-img" src={`/products/gs099/${L}/${lp}/${i + 1}.jpg`}
+            <img key={i} className="gs-img" src={`${imgBase}${i + 1}.jpg`}
               width={w} height={h} alt={`GS099 ${i + 1}`}
               loading={i < 2 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} decoding="async" />
           ))}
