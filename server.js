@@ -551,6 +551,29 @@ app.post('/api/admin/orders/remove', adminAuth, (req, res) => {
   res.json({ success: true, removed: removed.map(o => o.ref) })
 })
 
+// ── WHATSAPP CLICKS (landing pages) ───────────────────────────
+// data/wa_clicks.json = { since, pages: { 'gs099-mix/DA1': { button, help, helpShown } } }
+const WA_FILE = path.join(DATA_DIR, 'wa_clicks.json')
+if (!fs.existsSync(WA_FILE)) writeJSON(WA_FILE, { since: new Date().toISOString(), pages: {} })
+app.post('/api/wa/click', (req, res) => {
+  const page = String(req.body?.page || '').replace(/[^a-zA-Z0-9/_-]/g, '').slice(0, 40)
+  const type = String(req.body?.type || '')
+  if (!page || !['button', 'help', 'helpShown'].includes(type)) return res.status(400).json({ error: 'invalid' })
+  const data = readJSON(WA_FILE, { since: new Date().toISOString(), pages: {} })
+  if (!data.pages) data.pages = {}
+  const p = data.pages[page] || (data.pages[page] = { button: 0, help: 0, helpShown: 0 })
+  p[type] = (p[type] || 0) + 1
+  writeJSON(WA_FILE, data)
+  res.json({ ok: true })
+})
+app.get('/api/admin/wa-stats', adminAuth, (req, res) => {
+  res.json(readJSON(WA_FILE, { since: null, pages: {} }))
+})
+app.post('/api/admin/wa-stats/reset', adminAuth, (req, res) => {
+  writeJSON(WA_FILE, { since: new Date().toISOString(), pages: {} })
+  res.json({ ok: true })
+})
+
 // ── SERVE FRONTEND ────────────────────────────────────────────
 const distPath = path.join(__dirname, 'dist')
 if (fs.existsSync(distPath)) {

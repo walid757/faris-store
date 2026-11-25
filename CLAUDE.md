@@ -60,3 +60,4 @@ Never install a new npm package without asking me first.- Session 2026-11-20 —
 - 2026-11-23 — Stephano landing price now 420 (old 490) / 670 (old 980), saving 170. Pages 11-14 images still show 330/590 — asked user to replace images or turn pages off.
 - 2026-11-23 later — GS099 price reverted to 429 / 690 DH (saving 168).
 - 2026-11-24/25 — LIVE: GS099 new set 24-11 (4 Darija DA1-4 + 4 Fousha FU1-4), one link #gs099 (campaign gs099-mix). TikTok Pixel 7692558098648547380 site-wide + ViewContent/InitiateCheckout/PlaceAnOrder/CompletePayment on all landing pages. Users opening a link right after push may see old cached build — tell them to wait for deploy + Ctrl+F5.
+- 2026-11-25 — LIVE: WhatsApp number now 0710827264 everywhere (wa.me/212710827264; server WHATSAPP_NUMBER env fallback untouched). Landing pages: floating WA button + help card after 25s in form or 2 form errors (component WaHelp.jsx, event 'faris:formerror'). Admin tab 💬 WhatsApp (data/wa_clicks.json).

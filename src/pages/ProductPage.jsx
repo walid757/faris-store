@@ -746,7 +746,7 @@ export default function ProductPage({ slug = 'rbati', lang = 'fr', onLangToggle,
               نكملها معك في دقيقة — فريقنا جاهز الآن
             </div>
 
-            <a href={`https://wa.me/212642499661?text=${encodeURIComponent('السلام عليكم، أريد المساعدة في إتمام طلبي 🛒')}`}
+            <a href={`https://wa.me/212710827264?text=${encodeURIComponent('السلام عليكم، أريد المساعدة في إتمام طلبي 🛒')}`}
               target="_blank" rel="noopener noreferrer"
               onClick={() => setPopup(false)}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',

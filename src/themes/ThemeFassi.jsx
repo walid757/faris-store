@@ -561,7 +561,7 @@ export default function ThemeFassi({ lang, onLangToggle, onAdmin }) {
         )}
 
         {/* WHATSAPP */}
-        <a href="https://wa.me/212642499661" target="_blank" rel="noopener noreferrer" className="tf-wa">💬</a>
+        <a href="https://wa.me/212710827264" target="_blank" rel="noopener noreferrer" className="tf-wa">💬</a>
 
       </div>
     </>

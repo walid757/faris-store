@@ -102,7 +102,7 @@ export function WhatsApp() {
   const msg = 'السلام عليكم، أريد الاستفسار عن منتجاتكم للأحذية الجلدية 👟'
 
   return (
-    <a href={`https://wa.me/212642499661?text=${encodeURIComponent(msg)}`}
+    <a href={`https://wa.me/212710827264?text=${encodeURIComponent(msg)}`}
       target="_blank" rel="noopener noreferrer" className="wa-pill"
       style={{
         position: 'fixed', bottom: 24, right: 16, zIndex: 150,

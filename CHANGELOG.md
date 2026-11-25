@@ -24,3 +24,4 @@
 - 2026-11-23: GS099 price reverted to 429 DH (1 pair) / 690 DH (2 pairs), saving label 168 DH
 - 2026-11-24: Added GS099 new pages 24-11 A/B test: 4 Darija (DA1-4) + 4 Fousha (FU1-4) from Desktop folder "GS099 pages 24-11" (1440px q90), one link #gs099 rotating all 8 (#gsm/<id>), campaign gs099-mix, price 429 / 690, third table in admin tab "Test GS099"; existing #gs-ar / #gs-fr / #test unchanged
 - 2026-11-25: Added TikTok Pixel 7692558098648547380 site-wide (index.html, PageView) + ttPixel helper in client.js; landing pages (Stéphano #test, GS099 #gs-ar/#gs-fr/#gs099) send ViewContent, InitiateCheckout (form reached), PlaceAnOrder + CompletePayment (order) with MAD value; Facebook Pixel unchanged
+- 2026-11-25: WhatsApp 0710827264 — new number on all pages (replaces 0642499661), floating WhatsApp button + help card (after 25s in the form or 2 errors) on Stéphano/GS099 landing pages, admin tab "💬 WhatsApp" with clicks per page.

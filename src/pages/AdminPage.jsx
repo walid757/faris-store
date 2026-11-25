@@ -6,6 +6,7 @@ import {
 } from '../api/client.js'
 import LpStatsPanel from '../components/LpStatsPanel.jsx'
 import Lp2StatsPanel from '../components/Lp2StatsPanel.jsx'
+import WaStatsPanel from '../components/WaStatsPanel.jsx'
 
 const AD = '#070c18'
 const AB = '#0b1525'
@@ -209,6 +210,14 @@ export default function AdminPage({ onBack, onThemeChange }) {
             border: tab === 'gs099' ? `1px solid ${T}` : '1px solid transparent',
             borderRadius: 10, fontFamily: 'Inter,sans-serif', fontWeight: 600 }}>
           🧪 Test GS099
+        </button>
+        <button onClick={() => setTab('wa')}
+          style={{ padding: '8px 14px', fontSize: 12, cursor: 'pointer',
+            background: tab === 'wa' ? `linear-gradient(135deg,${T},#0d3d4a)` : 'transparent',
+            color: tab === 'wa' ? 'white' : '#475569',
+            border: tab === 'wa' ? `1px solid ${T}` : '1px solid transparent',
+            borderRadius: 10, fontFamily: 'Inter,sans-serif', fontWeight: 600 }}>
+          💬 WhatsApp
         </button>
       </div>
 
@@ -494,6 +503,9 @@ export default function AdminPage({ onBack, onThemeChange }) {
             <Lp2StatsPanel campaign="gs099-mix" title="GS099 — Nouvelles pages 24-11 (4 Darija + 4 Fousha)" link="#gs099" base="#gsm/" />
           </>
         )}
+
+        {/* WHATSAPP CLICKS TAB */}
+        {tab === 'wa' && <WaStatsPanel />}
 
         {/* SETTINGS TAB */}
         {tab === 'settings' && (

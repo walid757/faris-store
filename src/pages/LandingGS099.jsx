@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { createOrder, fbPixel, ttPixel } from '../api/client.js'
+import WaHelp from '../components/WaHelp.jsx'
 
 // ── GS099 LANDING PAGES (A/B test, Arabic + French) ───────────
 // Routes: #gs/ar/01..07 · #gs/fr/01..07   (one link per language: #gs-ar · #gs-fr)
@@ -273,6 +274,7 @@ export default function LandingGS099({ lang, id, set: pageSet }) {
   const used = pairs.slice(0, o.qty)
 
   const fail = (field, msg) => {
+    try { window.dispatchEvent(new Event('faris:formerror')) } catch {}
     setError(msg); setErrField(field)
     post('/api/lp2/formerror', { c, lp, field })
     setTimeout(() => {
@@ -432,6 +434,7 @@ export default function LandingGS099({ lang, id, set: pageSet }) {
           <div className="gs-sticky"><button onClick={goForm}>{T.sticky(o.prix)}</button></div>
         )}
       </div>
+      <WaHelp lang={L} product="GS099" page={c + '/' + lp} done={!!success} />
     </>
   )
 }

@@ -499,7 +499,7 @@ export default function ProductPageArabic({ slug, lang, onLangToggle, onBack, on
         </footer>
 
         {/* WhatsApp */}
-        <a href="https://wa.me/212642499661" target="_blank" rel="noopener noreferrer"
+        <a href="https://wa.me/212710827264" target="_blank" rel="noopener noreferrer"
           style={{ position:'fixed', bottom:20, left:20, zIndex:999,
             background:'#25D366', borderRadius:'50%', width:52, height:52,
             display:'flex', alignItems:'center', justifyContent:'center',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { PRODUCTS } from '../data/products.js'
 import { createOrder, fbPixel, ttPixel } from '../api/client.js'
+import WaHelp from '../components/WaHelp.jsx'
 
 // ── STÉPHANO LANDING PAGES (A/B/n test) ───────────────────────
 // Each page = stacked images from public/products/stephano/lp/XX/
@@ -252,6 +253,7 @@ export default function LandingStephano({ id }) {
 
   // show the error next to the field, scroll to it, and count it for the admin
   const fail = (field, msg) => {
+    try { window.dispatchEvent(new Event('faris:formerror')) } catch {}
     setError(msg); setErrField(field)
     lpFormError(lp, field)
     setTimeout(() => {
@@ -428,6 +430,7 @@ export default function LandingStephano({ id }) {
           </div>
         )}
       </div>
+      <WaHelp lang="ar" product="Stéphano" page={'stephano/' + lp} done={!!success} />
     </>
   )
 }
