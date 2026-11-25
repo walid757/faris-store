@@ -106,3 +106,7 @@ export const setProductPage = async (productPage) => {
   });
   return r.json();
 };
+// TikTok Pixel (loaded in index.html)
+export const ttPixel = (event, params) => {
+  try { if (typeof window !== 'undefined' && window.ttq) window.ttq.track(event, params) } catch {}
+};

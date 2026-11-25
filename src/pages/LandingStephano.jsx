@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { PRODUCTS } from '../data/products.js'
-import { createOrder, fbPixel } from '../api/client.js'
+import { createOrder, fbPixel, ttPixel } from '../api/client.js'
 
 // ── STÉPHANO LANDING PAGES (A/B/n test) ───────────────────────
 // Each page = stacked images from public/products/stephano/lp/XX/
@@ -195,6 +195,7 @@ export default function LandingStephano({ id }) {
       lpEvent(lp, 'visit')
     }
     fbPixel('ViewContent', { content_name: 'Stephano LP' + lp, value: OFFERS[0].prix, currency: 'MAD' })
+    ttPixel('ViewContent', { content_id: 'STEPHANO', content_type: 'product', content_name: 'Stephano LP' + lp, value: OFFERS[0].prix, currency: 'MAD' })
   }, [lp])
 
   // form reached (once per session) + hide sticky button when form is visible
@@ -206,6 +207,7 @@ export default function LandingStephano({ id }) {
       if (e.isIntersecting && !ss.get('lp_form_' + lp)) {
         ss.set('lp_form_' + lp, '1')
         lpEvent(lp, 'form')
+        ttPixel('InitiateCheckout', { content_id: 'STEPHANO', content_type: 'product', content_name: 'Stephano LP' + lp, value: OFFERS[0].prix, currency: 'MAD' })
       }
     }, { threshold: 0.15 })
     io.observe(el)
@@ -295,6 +297,9 @@ export default function LandingStephano({ id }) {
         lpEvent(lp, 'order', { ms, qty: o.qty, prix: o.prix, ref: res.ref })
       }
       fbPixel('Purchase', { value: o.prix, currency: 'MAD', content_name: 'Stephano LP' + lp, num_items: o.qty })
+      const ttOrder = { content_id: 'STEPHANO', content_type: 'product', content_name: 'Stephano LP' + lp, quantity: o.qty, value: o.prix, currency: 'MAD' }
+      ttPixel('PlaceAnOrder', ttOrder)
+      ttPixel('CompletePayment', ttOrder)
       setSuccess(res)
       setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50)
     } catch (e) {

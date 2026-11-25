@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { createOrder, fbPixel } from '../api/client.js'
+import { createOrder, fbPixel, ttPixel } from '../api/client.js'
 
 // ── GS099 LANDING PAGES (A/B test, Arabic + French) ───────────
 // Routes: #gs/ar/01..07 · #gs/fr/01..07   (one link per language: #gs-ar · #gs-fr)
@@ -225,6 +225,7 @@ export default function LandingGS099({ lang, id, set: pageSet }) {
     if (saved) t0.current = parseInt(saved, 10)
     else { ss.set('lp2_t0_' + key, String(t0.current)); post('/api/lp2/event', { c, lp, type: 'visit' }) }
     fbPixel('ViewContent', { content_name: pxName, value: OFFERS[0].prix, currency: 'MAD' })
+    ttPixel('ViewContent', { content_id: 'GS099', content_type: 'product', content_name: pxName, value: OFFERS[0].prix, currency: 'MAD' })
   }, [key])
 
   // form reached + hide sticky button while the form is visible
@@ -233,7 +234,10 @@ export default function LandingGS099({ lang, id, set: pageSet }) {
     if (!el || !('IntersectionObserver' in window)) return
     const io = new IntersectionObserver(([e]) => {
       setShowSticky(!e.isIntersecting)
-      if (e.isIntersecting && !ss.get('lp2_form_' + key)) { ss.set('lp2_form_' + key, '1'); post('/api/lp2/event', { c, lp, type: 'form' }) }
+      if (e.isIntersecting && !ss.get('lp2_form_' + key)) {
+        ss.set('lp2_form_' + key, '1'); post('/api/lp2/event', { c, lp, type: 'form' })
+        ttPixel('InitiateCheckout', { content_id: 'GS099', content_type: 'product', content_name: pxName, value: OFFERS[0].prix, currency: 'MAD' })
+      }
     }, { threshold: 0.15 })
     io.observe(el)
     return () => io.disconnect()
@@ -312,6 +316,9 @@ export default function LandingGS099({ lang, id, set: pageSet }) {
         post('/api/lp2/event', { c, lp, type: 'order', ms, qty: o.qty, prix: o.prix, ref: res.ref })
       }
       fbPixel('Purchase', { value: o.prix, currency: 'MAD', content_name: pxName, num_items: o.qty })
+      const ttOrder = { content_id: 'GS099', content_type: 'product', content_name: pxName, quantity: o.qty, value: o.prix, currency: 'MAD' }
+      ttPixel('PlaceAnOrder', ttOrder)
+      ttPixel('CompletePayment', ttOrder)
       setSuccess(res)
       setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50)
     } catch (e) {
