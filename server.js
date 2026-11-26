@@ -400,6 +400,10 @@ const LP2_CAMPAIGNS = {
   'gs099-fr': ['01', '02', '03', '04', '05', '06', '07'],
   'gs099-mix': ['DA1', 'DA2', 'DA3', 'DA4', 'FU1', 'FU2', 'FU3', 'FU4']
 }
+// models 26-11: 4 pages each (2 Darija + 2 Fousha), one link per model
+;['gs101', 'gs102', 'gs103', 'gs104', 'gs105', 'gs106', 'gs107', 'gs0441'].forEach(m => {
+  LP2_CAMPAIGNS['m26-' + m] = ['DA1', 'DA2', 'FU1', 'FU2']
+})
 if (!fs.existsSync(LP2_FILE)) writeJSON(LP2_FILE, { campaigns: {} })
 const lp2Read = () => readJSON(LP2_FILE, { campaigns: {} })
 const lp2Camp = (data, c) => {
@@ -418,7 +422,7 @@ app.post('/api/lp2/event', (req, res) => {
   if (type === 'order') {
     p.orders++
     p.pairs   += Number(qty) === 2 ? 2 : 1
-    p.revenue += [429, 690, 449, 730, 619, 990].includes(Number(prix)) ? Number(prix) : 0
+    p.revenue += [429, 690, 449, 730, 619, 990, 420, 670].includes(Number(prix)) ? Number(prix) : 0
     const t = Number(ms)
     if (t > 0 && t < 7 * 24 * 3600 * 1000) p.times.push(Math.round(t))
     if (ref) (p.refs = p.refs || []).push(String(ref).slice(0, 20))
@@ -541,7 +545,7 @@ app.post('/api/admin/orders/remove', adminAuth, (req, res) => {
         if (!(p.refs || []).includes(o.ref)) return
         p.refs    = p.refs.filter(r => r !== o.ref)
         p.orders  = Math.max(0, (p.orders || 0) - 1)
-        p.pairs   = Math.max(0, (p.pairs || 0) - ([690, 730, 990].includes(Number(o.prix)) ? 2 : 1))
+        p.pairs   = Math.max(0, (p.pairs || 0) - ([690, 730, 990, 670].includes(Number(o.prix)) ? 2 : 1))
         p.revenue = Math.max(0, (p.revenue || 0) - (Number(o.prix) || 0))
       })
     })

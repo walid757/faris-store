@@ -11,6 +11,7 @@ import LandingStephano from './pages/LandingStephano.jsx'
 import LpRotator from './pages/LpRotator.jsx'
 import LandingGS099, { GS_CAMPAIGN, GS_PAGE_IDS, GS_MIX } from './pages/LandingGS099.jsx'
 import LpRotator2 from './pages/LpRotator2.jsx'
+import LandingM26, { M26_MODELS, M26_PAGE_IDS, M26_CAMPAIGN } from './pages/LandingM26.jsx'
 
 // ── SIMPLE ROUTER ─────────────────────────────────────────────
 const getPage = () => {
@@ -23,6 +24,8 @@ const getPage = () => {
   if (hash === '#gs-ar' || hash === '#gs-fr') return 'gsrot'
   if (hash === '#gs099')           return 'gsmixrot'
   if (hash.startsWith('#gsm/'))    return 'gsmix'
+  if (Object.prototype.hasOwnProperty.call(M26_MODELS, hash.slice(1))) return 'm26rot'
+  if (hash.startsWith('#m26/'))    return 'm26'
   return 'home'
 }
 
@@ -80,6 +83,16 @@ export default function App() {
   if (page === 'gsmix') {
     const gid = window.location.hash.replace('#gsm/', '').slice(0, 3)
     return <LandingGS099 key={'mix' + gid} set="mix" id={gid} />
+  }
+
+  if (page === 'm26rot') {
+    const mm = window.location.hash.slice(1)
+    return <LpRotator2 key={mm} campaign={M26_CAMPAIGN(mm)} base={'#m26/' + mm + '/'} ids={M26_PAGE_IDS} />
+  }
+
+  if (page === 'm26') {
+    const [, mm, mid] = window.location.hash.split('/')
+    return <LandingM26 key={mm + mid} model={mm} id={(mid || '').slice(0, 3)} />
   }
 
   if (page === 'gs') {

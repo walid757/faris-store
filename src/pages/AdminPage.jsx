@@ -7,6 +7,7 @@ import {
 import LpStatsPanel from '../components/LpStatsPanel.jsx'
 import Lp2StatsPanel from '../components/Lp2StatsPanel.jsx'
 import WaStatsPanel from '../components/WaStatsPanel.jsx'
+import { M26_MODELS, M26_IDS } from './LandingM26.jsx'
 
 const AD = '#070c18'
 const AB = '#0b1525'
@@ -218,6 +219,14 @@ export default function AdminPage({ onBack, onThemeChange }) {
             border: tab === 'wa' ? `1px solid ${T}` : '1px solid transparent',
             borderRadius: 10, fontFamily: 'Inter,sans-serif', fontWeight: 600 }}>
           💬 WhatsApp
+        </button>
+        <button onClick={() => setTab('m26')}
+          style={{ padding: '8px 14px', fontSize: 12, cursor: 'pointer',
+            background: tab === 'm26' ? `linear-gradient(135deg,${T},#0d3d4a)` : 'transparent',
+            color: tab === 'm26' ? 'white' : '#475569',
+            border: tab === 'm26' ? `1px solid ${T}` : '1px solid transparent',
+            borderRadius: 10, fontFamily: 'Inter,sans-serif', fontWeight: 600 }}>
+          🧪 Test 26 Nov
         </button>
       </div>
 
@@ -503,6 +512,11 @@ export default function AdminPage({ onBack, onThemeChange }) {
             <Lp2StatsPanel campaign="gs099-mix" title="GS099 — Nouvelles pages 24-11 (4 Darija + 4 Fousha)" link="#gs099" base="#gsm/" />
           </>
         )}
+
+        {/* MODELS 26-11 A/B TEST TAB (one panel per model) */}
+        {tab === 'm26' && M26_IDS.map(m => (
+          <Lp2StatsPanel key={m} campaign={'m26-' + m} title={M26_MODELS[m].name + ' — 4 pages (2 Darija + 2 Fousha)'} link={'#' + m} base={'#m26/' + m + '/'} />
+        ))}
 
         {/* WHATSAPP CLICKS TAB */}
         {tab === 'wa' && <WaStatsPanel />}
