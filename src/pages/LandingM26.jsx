@@ -10,7 +10,7 @@ import { M26_DIMS } from '../data/m26dims.js'
 
 // colors = [value saved in the order, label shown on the page]
 export const M26_MODELS = {
-  gs101:  { name: 'GS101',  colors: [['Noir', 'كحل'], ['Marron', 'بني'], ['Bleu marine', 'كحلي']] },
+  gs101:  { name: 'GS101',  colors: [['Noir', 'كحل'], ['Marron', 'بني']] },
   gs102:  { name: 'GS102',  colors: [['Blanc', 'بيض']] },
   gs103:  { name: 'GS103',  colors: [['Blanc', 'بيض'], ['Bleu marine', 'كحلي'], ['Marron', 'بني']] },
   gs104:  { name: 'GS104',  colors: [['Bleu', 'زرق']] },
