@@ -387,7 +387,7 @@ export default function LandingStephano({ id }) {
                   <input id="lp-f-nom" className={'lp-in' + (errField === 'nom' ? ' bad' : '')} placeholder="الاسم الكامل"
                     value={form.nom} onChange={set('nom')} autoComplete="name" />
                   {ferr('nom')}
-                  <input id="lp-f-tel" className={'lp-in' + (errField === 'tel' ? ' bad' : '')} placeholder="رقم الهاتف (06 / 07)"
+                  <input id="lp-f-tel" className={'lp-in' + (errField === 'tel' ? ' bad' : '')} placeholder="رقم الهاتف"
                     inputMode="tel" type="tel" autoComplete="tel" maxLength={20}
                     value={form.tel} onChange={set('tel')}
                     onBlur={() => setForm(f => ({ ...f, tel: normalizePhone(f.tel) }))} />
@@ -409,7 +409,7 @@ export default function LandingStephano({ id }) {
                   {ferr('adresse')}
 
                   <button className="lp-cta" onClick={submit} disabled={loading}>
-                    {loading ? '...' : `أكد الطلب — ${o.prix} درهم`}
+                    {loading ? '...' : `اطلب الآن — ${o.prix} درهم`}
                   </button>
                   {error && !errField && <div className="lp-err">{error}</div>}
 

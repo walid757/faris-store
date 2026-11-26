@@ -29,3 +29,4 @@
 - 2026-11-26: GS101 colors fixed to Noir + Marron only (removed Bleu marine).
 - 2026-11-26: TikTok pixel fix — ttq.load now uses pixel CODE DB0NFM3C77U16D14K880 (was pixel ID 7692558098648547380, which never loaded).
 - 2026-11-26: models 26-11 form — phone placeholder 'رقم الهاتف', button 'اطلب الآن' (was 'أكد الطلب').
+- 2026-11-26: Stéphano + GS099 forms — phone placeholder without (06 / 07), button 'اطلب الآن' / 'Commander maintenant'; 06/07 validation kept.
