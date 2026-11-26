@@ -27,3 +27,4 @@
 - 2026-11-25: WhatsApp 0710827264 — new number on all pages (replaces 0642499661), floating WhatsApp button + help card (after 25s in the form or 2 errors) on Stéphano/GS099 landing pages, admin tab "💬 WhatsApp" with clicks per page.
 - 2026-11-26: A/B test models 26-11 — 8 models (GS101-GS107, GS0441), 4 pages each (DA1/DA2 Darija, FU1/FU2 Fousha), one link per model #gs101..#gs107 #gs0441, price 420 / 670, colors from the pages, admin tab "🧪 Test 26 Nov".
 - 2026-11-26: GS101 colors fixed to Noir + Marron only (removed Bleu marine).
+- 2026-11-26: TikTok pixel fix — ttq.load now uses pixel CODE DB0NFM3C77U16D14K880 (was pixel ID 7692558098648547380, which never loaded).
